@@ -75,7 +75,7 @@ namespace NekoMenu
         // Force game start
         GameStartManager.Instance.ResetStartState();
         GameStartManager.Instance.countDownTimer = 0.1f;
-        GameStartManager.Instance.StartGame();
+        GameStartManager.Instance.BeginGame();
         AmongUsClient.Instance.SendStartGame();
     }
 
