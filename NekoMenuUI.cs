@@ -74,7 +74,7 @@ namespace NekoMenu
             // Draw menu - FIXED LINE 77
             if (menuVisible)
             {
-                menuRect = GUI.Window(0, menuRect, new GUI.WindowFunction(DrawMenu), "NEKO MENU (Right Ctrl)");
+                menuRect = GUI.Window(0, menuRect, (GUI.WindowFunction)DrawMenu, "NEKO MENU (Right Ctrl)");
             }
         }
         
