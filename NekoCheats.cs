@@ -67,20 +67,19 @@ namespace NekoMenu
         }
 
         public static void ForceStartGameCheat()
-{
-    if (!CheatToggles.forceStartGame) return;
+        {
+            if (!CheatToggles.forceStartGame) return;
 
-    if (Utils.isHost && Utils.isLobby)
-    {
-        // Force game start
-        GameStartManager.Instance.ResetStartState();
-        GameStartManager.Instance.countDownTimer = 0.1f;
-        GameStartManager.Instance.BeginGame();
-        AmongUsClient.Instance.SendStartGame();
-    }
+            if (Utils.isHost && Utils.isLobby)
+            {
+                GameStartManager.Instance.ResetStartState();
+                GameStartManager.Instance.countDownTimer = 0.1f;
+                GameStartManager.Instance.BeginGame();
+                AmongUsClient.Instance.SendStartGame();
+            }
 
-    CheatToggles.forceStartGame = false;
-}
+            CheatToggles.forceStartGame = false;
+        }
 
         public static void NoKillCdCheat(PlayerControl playerControl)
         {
@@ -362,15 +361,6 @@ namespace NekoMenu
 
             PlayerControl.LocalPlayer.Revive();
             CheatToggles.fakeRevive = false;
-        }
-
-        public static void FakeRoleCheat()
-        {
-            if (!CheatToggles.fakeRole || PlayerControl.LocalPlayer == null) return;
-            
-            // This would need proper role changing logic
-            // For now just toggle off
-            CheatToggles.fakeRole = false;
         }
     }
 }
