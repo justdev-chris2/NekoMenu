@@ -3,8 +3,6 @@ name: Build NekoMenu
 on:
   push:
     branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
   workflow_dispatch:
 
 jobs:
@@ -21,9 +19,9 @@ jobs:
         dotnet-version: '6.0.x'
     
     - name: Build DLL
-      run: dotnet build NekoMenu.csproj -c Release
+      run: dotnet build -c Release
       
-    - name: Upload Build Artifact
+    - name: Upload Artifact
       uses: actions/upload-artifact@v4
       with:
         name: NekoMenu-DLL
