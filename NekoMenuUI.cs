@@ -151,7 +151,7 @@ namespace NekoMenu
             {
                 foreach (var player in PlayerControl.AllPlayerControls)
                 {
-                    if (player == null || player == PlayerControl.LocalPlayer || player.Data == null) continue;
+                    if (player == null || player.Data == null) continue;
                     
                     string status = player.Data.IsDead ? "💀" : "❤️";
                     string role = player.Data.Role != null ? player.Data.Role.ToString() : "No Role";
