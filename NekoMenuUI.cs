@@ -25,7 +25,6 @@ namespace NekoMenu
             if (Input.GetKeyDown(KeyCode.RightControl))
                 menuVisible = !menuVisible;
                 
-            // Run cheats every frame
             if (PlayerControl.LocalPlayer != null)
             {
                 NekoCheats.NoKillCdCheat(PlayerControl.LocalPlayer);
@@ -34,7 +33,6 @@ namespace NekoMenu
                 NekoCheats.NoClipCheat();
                 NekoCheats.TeleportCursorCheat();
                 
-                // Role-specific handlers
                 if (PlayerControl.LocalPlayer.Data.Role is EngineerRole engineer)
                     NekoCheats.HandleEngineerCheats(engineer);
                     
@@ -48,7 +46,6 @@ namespace NekoMenu
                     NekoCheats.HandleTrackerCheats(tracker);
             }
             
-            // One-time cheats
             NekoCheats.CloseMeetingCheat();
             NekoCheats.SkipMeetingCheat();
             NekoCheats.CallMeetingCheat();
@@ -59,19 +56,20 @@ namespace NekoMenu
             NekoCheats.KillAllCheat();
             NekoCheats.KillAllCrewCheat();
             NekoCheats.KillAllImpsCheat();
+            NekoCheats.KillSelectedCheat();
+            NekoCheats.KillSelfCheat();
             NekoCheats.ProtectCheat();
             NekoCheats.ReviveCheat();
+            NekoCheats.FakeRoleCheat();
         }
         
         private void OnGUI()
         {
-            // Draw ESP
             if (CheatToggles.espEnabled)
             {
                 DrawESP();
             }
             
-            // Draw menu - FIXED LINE 77
             if (menuVisible)
             {
                 menuRect = GUI.Window(0, menuRect, (GUI.WindowFunction)DrawMenu, "NEKO MENU (Right Ctrl)");
@@ -82,7 +80,6 @@ namespace NekoMenu
         {
             GUI.DragWindow(new Rect(0, 0, 10000, 20));
             
-            // Tabs
             GUILayout.BeginHorizontal();
             for (int i = 0; i < tabs.Length; i++)
             {
@@ -129,22 +126,34 @@ namespace NekoMenu
             GUILayout.Space(10);
             
             if (GUILayout.Button("Kill All Players", GUILayout.Height(30)))
-            {
                 CheatToggles.killAll = true;
-            }
             
             if (GUILayout.Button("Kill All Crewmates", GUILayout.Height(30)))
-            {
                 CheatToggles.killAllCrew = true;
-            }
             
             if (GUILayout.Button("Kill All Impostors", GUILayout.Height(30)))
-            {
                 CheatToggles.killAllImps = true;
-            }
             
             GUILayout.Space(10);
+            GUILayout.Label("TARGET KILL", GUI.skin.box);
             
+            if (CheatToggles.selectedTargetId >= 0)
+            {
+                var target = PlayerControl.AllPlayerControls.ToArray()
+                    .FirstOrDefault(p => p != null && p.PlayerId == CheatToggles.selectedTargetId);
+                if (target != null)
+                {
+                    GUILayout.Label($"Selected: {target.Data.PlayerName}");
+                }
+            }
+            
+            if (GUILayout.Button("Kill Selected Player", GUILayout.Height(30)))
+                CheatToggles.killSelected = true;
+            
+            if (GUILayout.Button("Kill Yourself", GUILayout.Height(30)))
+                CheatToggles.killSelf = true;
+            
+            GUILayout.Space(10);
             GUILayout.Label("PLAYER LIST", GUI.skin.box);
             
             if (PlayerControl.AllPlayerControls != null)
@@ -155,14 +164,13 @@ namespace NekoMenu
                     
                     string status = player.Data.IsDead ? "💀" : "❤️";
                     string role = player.Data.Role != null ? player.Data.Role.ToString() : "No Role";
+                    string name = player.Data.PlayerName;
                     
-                    if (GUILayout.Button($"{status} {player.Data.PlayerName} - {role}"))
+                    GUI.backgroundColor = (CheatToggles.selectedTargetId == player.PlayerId) ? Color.green : Color.gray;
+                    
+                    if (GUILayout.Button($"{status} {name} - {role}", GUILayout.Height(20)))
                     {
-                        // Toggle protect for this player
-                        if (CheatToggles.playersToProtect.Contains(player))
-                            CheatToggles.playersToProtect.Remove(player);
-                        else
-                            CheatToggles.playersToProtect.Add(player);
+                        CheatToggles.selectedTargetId = player.PlayerId;
                     }
                 }
             }
@@ -177,22 +185,29 @@ namespace NekoMenu
             CheatToggles.walkVent = GUILayout.Toggle(CheatToggles.walkVent, "Walk in Vents");
             
             GUILayout.Space(10);
-            
             GUILayout.Label("SHAPESHIFTER", GUI.skin.box);
             CheatToggles.endlessSsDuration = GUILayout.Toggle(CheatToggles.endlessSsDuration, "Endless Shapeshift");
             
             GUILayout.Space(10);
-            
             GUILayout.Label("SCIENTIST", GUI.skin.box);
             CheatToggles.noVitalsCooldown = GUILayout.Toggle(CheatToggles.noVitalsCooldown, "No Vitals Cooldown");
             CheatToggles.endlessBattery = GUILayout.Toggle(CheatToggles.endlessBattery, "Endless Battery");
             
             GUILayout.Space(10);
-            
             GUILayout.Label("TRACKER", GUI.skin.box);
             CheatToggles.noTrackingCooldown = GUILayout.Toggle(CheatToggles.noTrackingCooldown, "No Tracking Cooldown");
             CheatToggles.noTrackingDelay = GUILayout.Toggle(CheatToggles.noTrackingDelay, "No Tracking Delay");
             CheatToggles.endlessTracking = GUILayout.Toggle(CheatToggles.endlessTracking, "Endless Tracking");
+            
+            GUILayout.Space(10);
+            GUILayout.Label("FAKE ROLE", GUI.skin.box);
+            string[] fakeRoles = { "Crewmate", "Impostor", "Engineer", "Scientist", "Shapeshifter" };
+            CheatToggles.selectedFakeRole = GUILayout.SelectionGrid(CheatToggles.selectedFakeRole, fakeRoles, 2);
+            
+            if (GUILayout.Button("Apply Fake Role", GUILayout.Height(25)))
+            {
+                CheatToggles.fakeRole = true;
+            }
         }
         
         private void DrawMovementTab()
@@ -203,7 +218,6 @@ namespace NekoMenu
             CheatToggles.teleportCursor = GUILayout.Toggle(CheatToggles.teleportCursor, "Teleport to Cursor (Right Click)");
             
             GUILayout.Space(10);
-            
             GUILayout.Label("MEETINGS", GUI.skin.box);
             
             if (GUILayout.Button("Close Meeting", GUILayout.Height(25)))
@@ -229,7 +243,7 @@ namespace NekoMenu
             if (GUILayout.Button("Complete My Tasks", GUILayout.Height(25)))
                 CheatToggles.completeMyTasks = true;
                 
-            if (GUILayout.Button("Revive (Fake)", GUILayout.Height(25)))
+            if (GUILayout.Button("Revive", GUILayout.Height(25)))
                 CheatToggles.fakeRevive = true;
         }
         
@@ -250,7 +264,6 @@ namespace NekoMenu
                 bool isGhost = player.Data.IsDead;
                 bool isImpostor = player.Data.Role != null && player.Data.Role.IsImpostor;
                 
-                // Filter logic
                 if (isGhost && !CheatToggles.showGhosts) continue;
                 if (isImpostor && !CheatToggles.showImpostors) continue;
                 if (!isImpostor && !isGhost && !CheatToggles.showCrewmates) continue;
@@ -263,7 +276,6 @@ namespace NekoMenu
                     Color espColor = isGhost ? Color.gray : (isImpostor ? Color.red : Color.green);
                     float distance = Vector3.Distance(PlayerControl.LocalPlayer.transform.position, player.transform.position);
                     
-                    // Draw box
                     DrawBox(screenPos, 50, 65, espColor, 2f);
                     
                     string info = "";
@@ -286,18 +298,14 @@ namespace NekoMenu
         
         private void DrawBox(Vector3 pos, float width, float height, Color color, float thickness)
         {
-            Texture2D texture = new Texture2D(1, 1);
-            texture.SetPixel(0, 0, color);
-            texture.Apply();
+            GUI.color = color;
             
-            // Top
-            GUI.DrawTexture(new Rect(pos.x - width/2, pos.y - height/2, width, thickness), texture);
-            // Bottom
-            GUI.DrawTexture(new Rect(pos.x - width/2, pos.y + height/2 - thickness, width, thickness), texture);
-            // Left
-            GUI.DrawTexture(new Rect(pos.x - width/2, pos.y - height/2, thickness, height), texture);
-            // Right
-            GUI.DrawTexture(new Rect(pos.x + width/2 - thickness, pos.y - height/2, thickness, height), texture);
+            GUI.DrawTexture(new Rect(pos.x - width/2, pos.y - height/2, width, thickness), Texture2D.whiteTexture);
+            GUI.DrawTexture(new Rect(pos.x - width/2, pos.y + height/2 - thickness, width, thickness), Texture2D.whiteTexture);
+            GUI.DrawTexture(new Rect(pos.x - width/2, pos.y - height/2, thickness, height), Texture2D.whiteTexture);
+            GUI.DrawTexture(new Rect(pos.x + width/2 - thickness, pos.y - height/2, thickness, height), Texture2D.whiteTexture);
+            
+            GUI.color = Color.white;
         }
     }
 }
