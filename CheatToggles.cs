@@ -37,6 +37,9 @@ namespace NekoMenu
         
         // Kill toggles
         public static bool zeroKillCd = false;
+        public static int selectedTargetId = -1;
+        public static bool killSelected = false;
+        public static bool killSelf = false;
         
         // Meeting toggles
         public static bool closeMeeting = false;
@@ -47,6 +50,10 @@ namespace NekoMenu
         
         // Tasks
         public static bool completeMyTasks = false;
+        
+        // Fake role
+        public static bool fakeRole = false;
+        public static int selectedFakeRole = 0;
         
         // List for protect cheat
         public static List<PlayerControl> playersToProtect = new List<PlayerControl>();
