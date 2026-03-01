@@ -45,14 +45,6 @@ namespace NekoMenu
         public static bool forceStartGame = false;
         public static bool sabotageMap = false;
         
-        // Animation toggles
-        public static bool animScan = false;
-        public static bool animShields = false;
-        public static bool animAsteroids = false;
-        public static bool animEmptyGarbage = false;
-        public static bool animCamsInUse = false;
-        public static bool animPet = false;
-        
         // Tasks
         public static bool completeMyTasks = false;
         
