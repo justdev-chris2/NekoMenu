@@ -98,7 +98,7 @@ namespace NekoMenu
             {
                 foreach (var task in PlayerControl.LocalPlayer.myTasks)
                 {
-                    Utils.CompleteTask(task);
+                    task.Complete();
                 }
 
                 CheatToggles.completeMyTasks = false;
@@ -258,7 +258,10 @@ namespace NekoMenu
                 // Kill all players by sending a successful MurderPlayer RPC call
                 foreach (var player in PlayerControl.AllPlayerControls)
                 {
-                    Utils.MurderPlayer(player, MurderResultFlags.Succeeded);
+                    if (player != null && player != PlayerControl.LocalPlayer && !player.Data.IsDead)
+                    {
+                        PlayerControl.LocalPlayer.MurderPlayer(player);
+                    }
                 }
             }
 
@@ -278,9 +281,9 @@ namespace NekoMenu
                 // Kill all players by sending a successful MurderPlayer RPC call
                 foreach (var player in PlayerControl.AllPlayerControls)
                 {
-                    if (player.Data.Role.TeamType == RoleTeamTypes.Crewmate)
+                    if (player != null && player != PlayerControl.LocalPlayer && !player.Data.IsDead && player.Data.Role.TeamType == RoleTeamTypes.Crewmate)
                     {
-                        Utils.MurderPlayer(player, MurderResultFlags.Succeeded);
+                        PlayerControl.LocalPlayer.MurderPlayer(player);
                     }
                 }
             }
@@ -301,9 +304,9 @@ namespace NekoMenu
                 // Kill all players by sending a successful MurderPlayer RPC call
                 foreach (var player in PlayerControl.AllPlayerControls)
                 {
-                    if (player.Data.Role.TeamType == RoleTeamTypes.Impostor)
+                    if (player != null && player != PlayerControl.LocalPlayer && !player.Data.IsDead && player.Data.Role.TeamType == RoleTeamTypes.Impostor)
                     {
-                        Utils.MurderPlayer(player, MurderResultFlags.Succeeded);
+                        PlayerControl.LocalPlayer.MurderPlayer(player);
                     }
                 }
             }
@@ -317,10 +320,9 @@ namespace NekoMenu
 
             foreach (var player in CheatToggles.playersToProtect)
             {
-                if (player.protectedByGuardianId == -1) // -1 means no protection is currently active
+                if (player != null && player.protectedByGuardianId == -1) // -1 means no protection is currently active
                 {
-                    //PlayerControl.LocalPlayer.TurnOnProtection(true, PlayerControl.LocalPlayer.cosmetics.ColorId, PlayerControl.LocalPlayer.PlayerId);
-                    PlayerControl.LocalPlayer.RpcProtectPlayer(player, PlayerControl.LocalPlayer.cosmetics.ColorId);
+                    PlayerControl.LocalPlayer.ProtectPlayer(player, PlayerControl.LocalPlayer.cosmetics.ColorId);
                 }
             }
         }
@@ -340,9 +342,7 @@ namespace NekoMenu
         {
             try
             {
-
                 PlayerControl.LocalPlayer.Collider.enabled = !(CheatToggles.noClip || PlayerControl.LocalPlayer.onLadder);
-
             } catch { }
         }
 
@@ -352,86 +352,6 @@ namespace NekoMenu
 
             PlayerControl.LocalPlayer.Revive();
             CheatToggles.fakeRevive = false;
-        }
-
-        public static void PlayScannerCheat()
-        {
-            if (CheatToggles.animScan && !_isScanAnimActive)
-            {
-                Utils.ForceSetScanner(PlayerControl.LocalPlayer, true);
-                _isScanAnimActive = true;
-            }
-            else if (!CheatToggles.animScan && _isScanAnimActive)
-            {
-                Utils.ForceSetScanner(PlayerControl.LocalPlayer, false);
-                _isScanAnimActive = false;
-            }
-        }
-
-        public static void PlayAnimationCheat()
-        {
-            var map = (MapNames)Utils.GetCurrentMapID();
-
-            if (CheatToggles.animShields)
-            {
-                if (map is MapNames.Skeld or MapNames.Dleks)
-                {
-                    Utils.ForcePlayAnimation((byte)TaskTypes.PrimeShields);
-                }
-                CheatToggles.animShields = false;
-            }
-
-            if (CheatToggles.animAsteroids)
-            {
-                if (map is MapNames.Skeld or MapNames.Dleks or MapNames.Polus)
-                {
-                    Utils.ForcePlayAnimation((byte)TaskTypes.ClearAsteroids);
-                }
-                else
-                {
-                    CheatToggles.animAsteroids = false;
-                }
-            }
-
-            if (CheatToggles.animEmptyGarbage)
-            {
-                if (map is MapNames.Skeld or MapNames.Dleks)
-                {
-                    Utils.ForcePlayAnimation((byte)TaskTypes.EmptyGarbage);
-                }
-
-                CheatToggles.animEmptyGarbage = false;
-            }
-
-            if (CheatToggles.animCamsInUse && !_isCamsAnimActive)
-            {
-                // There is no cameras on Mira HQ and Fungle
-                if (map is MapNames.MiraHQ or MapNames.Fungle)
-                {
-                    CheatToggles.animCamsInUse = false;
-                }
-                else
-                {
-                    // ShipStatus.Instance.UpdateSystem(SystemTypes.Security, PlayerControl.LocalPlayer, (byte)(CheatToggles.animCamsInUse ? 1 : 0));
-                    ShipStatus.Instance.RpcUpdateSystem(SystemTypes.Security, 1);
-                    _isCamsAnimActive = true;
-                }
-            }
-            else if (!CheatToggles.animCamsInUse && _isCamsAnimActive)
-            {
-                // Turn off cams if the cheat was used before and is now disabled
-                ShipStatus.Instance.RpcUpdateSystem(SystemTypes.Security, 0);
-                _isCamsAnimActive = false;
-            }
-
-            if (CheatToggles.animPet && Utils.isPlayer && PlayerControl.LocalPlayer.cosmetics != null && PlayerControl.LocalPlayer.cosmetics.CurrentPet != null)
-            {
-                // Don't move LocalPlayer, just send the RPC so others see the petting animation
-                RpcPetMessage rpcMessage = new(PlayerControl.LocalPlayer.MyPhysics.NetId,
-                    PlayerControl.LocalPlayer.cosmetics.CurrentPet.PettingPlayerPosition,
-                    PlayerControl.LocalPlayer.cosmetics.CurrentPet.transform.position);
-                AmongUsClient.Instance.LateBroadcastReliableMessage(Unsafe.As<IGameDataMessage>(rpcMessage));
-            }
         }
     }
 }
