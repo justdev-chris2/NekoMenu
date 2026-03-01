@@ -1,6 +1,8 @@
-using System.Runtime.CompilerServices;
+using System;
+using System.Linq;
 using AmongUs.GameOptions;
-using AmongUs.InnerNet.GameDataMessages;
+using Hazel;
+using InnerNet;
 using UnityEngine;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
 
@@ -12,14 +14,11 @@ namespace NekoMenu
         {
             if (!CheatToggles.closeMeeting) return;
 
-            if (Utils.isMeeting) // Closes MeetingHud window if it's open
+            if (Utils.isMeeting)
             {
-
-                // Destroy MeetingHud window gameobject
                 MeetingHud.Instance.DespawnOnDestroy = false;
-                Object.Destroy(MeetingHud.Instance.gameObject);
+                UnityEngine.Object.Destroy(MeetingHud.Instance.gameObject);
 
-                // Gameplay must be reenabled
                 DestroyableSingleton<HudManager>.Instance.StartCoroutine(DestroyableSingleton<HudManager>.Instance.CoFadeFullScreen(Color.black, Color.clear, 0.2f, false));
                 PlayerControl.LocalPlayer.SetKillTimer(GameManager.Instance.LogicOptions.GetKillCooldown());
                 ShipStatus.Instance.EmergencyCooldown = GameManager.Instance.LogicOptions.GetEmergencyCooldown();
@@ -27,9 +26,8 @@ namespace NekoMenu
                 DestroyableSingleton<HudManager>.Instance.SetMapButtonEnabled(true);
                 DestroyableSingleton<HudManager>.Instance.SetHudActive(true);
                 ControllerManager.Instance.CloseAndResetAll();
-
             }
-            else if (ExileController.Instance) // Ends exile cutscene if it's playing
+            else if (ExileController.Instance)
             {
                 ExileController.Instance.ReEnableGameplay();
                 ExileController.Instance.WrapUp();
@@ -56,7 +54,6 @@ namespace NekoMenu
 
             if (Utils.isHost)
             {
-                // Same as PlayerControl.ReportDeadBody but without additional checks
                 MeetingRoomManager.Instance.AssignSelf(PlayerControl.LocalPlayer, null);
                 DestroyableSingleton<HudManager>.Instance.OpenMeetingRoom(PlayerControl.LocalPlayer);
                 PlayerControl.LocalPlayer.RpcStartMeeting(null);
@@ -75,6 +72,8 @@ namespace NekoMenu
 
             if (Utils.isHost && Utils.isLobby)
             {
+                GameStartManager.Instance.CountDownTimer = 0.1f;
+                GameStartManager.Instance.FinallyBegin();
                 AmongUsClient.Instance.SendStartGame();
             }
 
@@ -118,12 +117,10 @@ namespace NekoMenu
         {
             if (CheatToggles.endlessVentTime)
             {
-                // Makes vent time incredibly long (float.MaxValue) so that it never ends
                 engineerRole.inVentTimeRemaining = float.MaxValue;
             }
             else if (engineerRole.inVentTimeRemaining > engineerRole.GetCooldown())
             {
-                // Vent time is reset to normal value after the cheat is disabled
                 engineerRole.inVentTimeRemaining = engineerRole.GetCooldown();
             }
 
@@ -132,7 +129,6 @@ namespace NekoMenu
                 if (engineerRole.cooldownSecondsRemaining > 0f)
                 {
                     engineerRole.cooldownSecondsRemaining = 0f;
-
                     DestroyableSingleton<HudManager>.Instance.AbilityButton.ResetCoolDown();
                     DestroyableSingleton<HudManager>.Instance.AbilityButton.SetCooldownFill(0f);
                 }
@@ -143,14 +139,11 @@ namespace NekoMenu
         {
             if (CheatToggles.endlessSsDuration)
             {
-                // Makes shapeshift duration so incredibly long (float.MaxValue) so that it never ends
                 shapeshifterRole.durationSecondsRemaining = float.MaxValue;
             }
             else if (shapeshifterRole.durationSecondsRemaining > GameManager.Instance.LogicOptions.GetRoleFloat(FloatOptionNames.ShapeshifterDuration))
             {
-                // Shapeshift duration is reset to normal value after the cheat is disabled
                 shapeshifterRole.durationSecondsRemaining = GameManager.Instance.LogicOptions.GetRoleFloat(FloatOptionNames.ShapeshifterDuration);
-
             }
         }
 
@@ -163,12 +156,10 @@ namespace NekoMenu
 
             if (CheatToggles.endlessBattery)
             {
-                // Makes vitals battery so incredibly long (float.MaxValue) so that it never ends
                 scientistRole.currentCharge = float.MaxValue;
             }
             else if (scientistRole.currentCharge > scientistRole.RoleCooldownValue)
             {
-                // Battery charge is reset to normal value after the cheat is disabled
                 scientistRole.currentCharge = scientistRole.RoleCooldownValue;
             }
         }
@@ -179,7 +170,6 @@ namespace NekoMenu
             {
                 trackerRole.cooldownSecondsRemaining = 0f;
                 trackerRole.delaySecondsRemaining = 0f;
-
                 DestroyableSingleton<HudManager>.Instance.AbilityButton.ResetCoolDown();
                 DestroyableSingleton<HudManager>.Instance.AbilityButton.SetCooldownFill(0f);
             }
@@ -191,30 +181,22 @@ namespace NekoMenu
 
             if (CheatToggles.endlessTracking)
             {
-                // Makes vitals battery so incredibly long (float.MaxValue) so that it never ends
                 trackerRole.durationSecondsRemaining = float.MaxValue;
             }
             else if (trackerRole.durationSecondsRemaining > GameManager.Instance.LogicOptions.GetRoleFloat(FloatOptionNames.TrackerDuration))
             {
-                // Battery charge is reset to normal value after the cheat is disabled
                 trackerRole.durationSecondsRemaining = GameManager.Instance.LogicOptions.GetRoleFloat(FloatOptionNames.TrackerDuration);
             }
         }
 
         public static void UseVentCheat(HudManager hudManager)
         {
-            // try-catch to prevent errors when role is null
             try
             {
-
-                // Engineers & Impostors don't need this cheat so it is disabled for them
-                // Ghost venting causes issues so it is also disabled
-
                 if (!PlayerControl.LocalPlayer.Data.Role.CanVent && !PlayerControl.LocalPlayer.Data.IsDead)
                 {
                     hudManager.ImpostorVentButton.gameObject.SetActive(CheatToggles.useVents);
                 }
-
             } catch { }
         }
 
@@ -223,10 +205,8 @@ namespace NekoMenu
             try
             {
                 if (!CheatToggles.walkVent) return;
-
                 PlayerControl.LocalPlayer.inVent = false;
                 PlayerControl.LocalPlayer.moveable = true;
-
             } catch { }
         }
 
@@ -248,11 +228,10 @@ namespace NekoMenu
 
             if (Utils.isLobby)
             {
-                HudManager.Instance.Notifier.AddDisconnectMessage("Killing in lobby disabled for being too buggy");
+                HudManager.Instance.Notifier.AddDisconnectMessage("Killing in lobby disabled");
             }
             else
             {
-                // Kill all players by sending a successful MurderPlayer RPC call
                 foreach (var player in PlayerControl.AllPlayerControls)
                 {
                     if (player != null && player != PlayerControl.LocalPlayer && !player.Data.IsDead)
@@ -271,11 +250,10 @@ namespace NekoMenu
 
             if (Utils.isLobby)
             {
-                HudManager.Instance.Notifier.AddDisconnectMessage("Killing in lobby disabled for being too buggy");
+                HudManager.Instance.Notifier.AddDisconnectMessage("Killing in lobby disabled");
             }
             else
             {
-                // Kill all players by sending a successful MurderPlayer RPC call
                 foreach (var player in PlayerControl.AllPlayerControls)
                 {
                     if (player != null && player != PlayerControl.LocalPlayer && !player.Data.IsDead && player.Data.Role.TeamType == RoleTeamTypes.Crewmate)
@@ -294,11 +272,10 @@ namespace NekoMenu
 
             if (Utils.isLobby)
             {
-                HudManager.Instance.Notifier.AddDisconnectMessage("Killing in lobby disabled for being too buggy");
+                HudManager.Instance.Notifier.AddDisconnectMessage("Killing in lobby disabled");
             }
             else
             {
-                // Kill all players by sending a successful MurderPlayer RPC call
                 foreach (var player in PlayerControl.AllPlayerControls)
                 {
                     if (player != null && player != PlayerControl.LocalPlayer && !player.Data.IsDead && player.Data.Role.TeamType == RoleTeamTypes.Impostor)
@@ -311,13 +288,48 @@ namespace NekoMenu
             CheatToggles.killAllImps = false;
         }
 
+        public static void KillSelectedCheat()
+        {
+            if (!CheatToggles.killSelected || CheatToggles.selectedTargetId < 0) return;
+            
+            var target = PlayerControl.AllPlayerControls.ToArray()
+                .FirstOrDefault(p => p != null && p.PlayerId == CheatToggles.selectedTargetId);
+            
+            if (target != null)
+            {
+                // Force kill via RPC
+                MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(
+                    PlayerControl.LocalPlayer.NetId,
+                    (byte)RpcCalls.MurderPlayer,
+                    SendOption.Reliable,
+                    -1
+                );
+                writer.WriteNetObject(target);
+                writer.Write((int)MurderResultFlags.Succeeded);
+                AmongUsClient.Instance.FinishRpcImmediately(writer);
+                
+                PlayerControl.LocalPlayer.MurderPlayer(target, MurderResultFlags.Succeeded);
+                Utils.ShowMessage($"Killed {target.Data.PlayerName}");
+            }
+            
+            CheatToggles.killSelected = false;
+        }
+
+        public static void KillSelfCheat()
+        {
+            if (!CheatToggles.killSelf || PlayerControl.LocalPlayer == null) return;
+            
+            PlayerControl.LocalPlayer.MurderPlayer(PlayerControl.LocalPlayer, MurderResultFlags.Succeeded);
+            CheatToggles.killSelf = false;
+        }
+
         public static void ProtectCheat()
         {
             if (!Utils.isHost || Utils.isLobby) return;
 
             foreach (var player in CheatToggles.playersToProtect)
             {
-                if (player != null && player.protectedByGuardianId == -1) // -1 means no protection is currently active
+                if (player != null && player.protectedByGuardianId == -1)
                 {
                     PlayerControl.LocalPlayer.ProtectPlayer(player, PlayerControl.LocalPlayer.cosmetics.ColorId);
                 }
@@ -328,7 +340,6 @@ namespace NekoMenu
         {
             if (!CheatToggles.teleportCursor) return;
 
-            // Teleport player to cursor's in-world position on right-click
             if (Input.GetMouseButtonDown(1))
             {
                 PlayerControl.LocalPlayer.NetTransform.RpcSnapTo(Camera.main.ScreenToWorldPoint(Input.mousePosition));
@@ -349,6 +360,15 @@ namespace NekoMenu
 
             PlayerControl.LocalPlayer.Revive();
             CheatToggles.fakeRevive = false;
+        }
+
+        public static void FakeRoleCheat()
+        {
+            if (!CheatToggles.fakeRole || PlayerControl.LocalPlayer == null) return;
+            
+            // This would need proper role changing logic
+            // For now just toggle off
+            CheatToggles.fakeRole = false;
         }
     }
 }
