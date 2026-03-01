@@ -51,10 +51,6 @@ namespace NekoMenu
         // Tasks
         public static bool completeMyTasks = false;
         
-        // Fake role
-        public static bool fakeRole = false;
-        public static int selectedFakeRole = 0;
-        
         // List for protect cheat
         public static List<PlayerControl> playersToProtect = new List<PlayerControl>();
     }
