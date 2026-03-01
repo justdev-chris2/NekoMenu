@@ -11,7 +11,7 @@ namespace NekoMenu
     public static class Utils
     {
         public static bool isPlayer => PlayerControl.LocalPlayer != null;
-        public static bool isHost => AmongUsClient.Instance?.IsHost ?? false;
+        public static bool isHost => AmongUsClient.Instance?.NetMode is NetModes.HostGame or NetModes.LocalGame;
         public static bool isLobby => AmongUsClient.Instance?.GameState == InnerNetClient.GameStates.Joined;
         public static bool isGameStarted => AmongUsClient.Instance?.GameState == InnerNetClient.GameStates.Started;
         public static bool isMeeting => MeetingHud.Instance != null;
@@ -47,7 +47,7 @@ namespace NekoMenu
         {
             if (HudManager.Instance == null) return;
             
-            HudManager.Instance.Notifier.AddItem($"{title}: {message}");
+            HudManager.Instance.Chat.AddChat(PlayerControl.LocalPlayer, $"{title}: {message}");
         }
     }
 }
