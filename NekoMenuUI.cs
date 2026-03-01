@@ -33,7 +33,6 @@ namespace NekoMenu
                 NekoCheats.WalkInVentCheat();
                 NekoCheats.NoClipCheat();
                 NekoCheats.TeleportCursorCheat();
-                NekoCheats.PlayScannerCheat();
                 
                 // Role-specific handlers
                 if (PlayerControl.LocalPlayer.Data.Role is EngineerRole engineer)
@@ -62,7 +61,6 @@ namespace NekoMenu
             NekoCheats.KillAllImpsCheat();
             NekoCheats.ProtectCheat();
             NekoCheats.ReviveCheat();
-            NekoCheats.PlayAnimationCheat();
         }
         
         private void OnGUI()
@@ -76,7 +74,7 @@ namespace NekoMenu
             // Draw menu
             if (menuVisible)
             {
-                menuRect = GUI.Window(0, menuRect, DrawMenu, "NEKO MENU (Right Ctrl)");
+                menuRect = GUI.Window(0, menuRect, new GUI.WindowFunction(DrawMenu), "NEKO MENU (Right Ctrl)");
             }
         }
         
@@ -156,7 +154,7 @@ namespace NekoMenu
                     if (player == null || player == PlayerControl.LocalPlayer || player.Data == null) continue;
                     
                     string status = player.Data.IsDead ? "💀" : "❤️";
-                    string role = player.Data.Role != null ? player.Data.Role.RoleType.ToString() : "No Role";
+                    string role = player.Data.Role != null ? player.Data.Role.ToString() : "No Role";
                     
                     if (GUILayout.Button($"{status} {player.Data.PlayerName} - {role}"))
                     {
@@ -238,20 +236,7 @@ namespace NekoMenu
         private void DrawAnimTab()
         {
             GUILayout.Label("ANIMATIONS", GUI.skin.box);
-            
-            CheatToggles.animScan = GUILayout.Toggle(CheatToggles.animScan, "MedBay Scan");
-            
-            if (GUILayout.Button("Prime Shields", GUILayout.Height(25)))
-                CheatToggles.animShields = true;
-                
-            if (GUILayout.Button("Clear Asteroids", GUILayout.Height(25)))
-                CheatToggles.animAsteroids = true;
-                
-            if (GUILayout.Button("Empty Garbage", GUILayout.Height(25)))
-                CheatToggles.animEmptyGarbage = true;
-                
-            CheatToggles.animCamsInUse = GUILayout.Toggle(CheatToggles.animCamsInUse, "Use Cameras Animation");
-            CheatToggles.animPet = GUILayout.Toggle(CheatToggles.animPet, "Pet Animation");
+            GUILayout.Label("Animation cheats removed - API changed", GUI.skin.label);
         }
         
         private void DrawESP()
@@ -285,7 +270,7 @@ namespace NekoMenu
                     if (CheatToggles.showNames)
                         info += player.Data.PlayerName + "\n";
                     if (CheatToggles.showRoles)
-                        info += (player.Data.Role?.RoleType.ToString() ?? "No Role") + "\n";
+                        info += (player.Data.Role?.ToString() ?? "No Role") + "\n";
                     if (CheatToggles.showDistance)
                         info += $"{distance:F1}m";
                     
