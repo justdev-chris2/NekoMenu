@@ -8,9 +8,6 @@ namespace NekoMenu
 {
     public static class NekoCheats
     {
-        private static bool _isScanAnimActive;
-        private static bool _isCamsAnimActive;
-
         public static void CloseMeetingCheat()
         {
             if (!CheatToggles.closeMeeting) return;
@@ -260,7 +257,7 @@ namespace NekoMenu
                 {
                     if (player != null && player != PlayerControl.LocalPlayer && !player.Data.IsDead)
                     {
-                        PlayerControl.LocalPlayer.MurderPlayer(player);
+                        PlayerControl.LocalPlayer.MurderPlayer(player, MurderResultFlags.Succeeded);
                     }
                 }
             }
@@ -283,7 +280,7 @@ namespace NekoMenu
                 {
                     if (player != null && player != PlayerControl.LocalPlayer && !player.Data.IsDead && player.Data.Role.TeamType == RoleTeamTypes.Crewmate)
                     {
-                        PlayerControl.LocalPlayer.MurderPlayer(player);
+                        PlayerControl.LocalPlayer.MurderPlayer(player, MurderResultFlags.Succeeded);
                     }
                 }
             }
@@ -306,7 +303,7 @@ namespace NekoMenu
                 {
                     if (player != null && player != PlayerControl.LocalPlayer && !player.Data.IsDead && player.Data.Role.TeamType == RoleTeamTypes.Impostor)
                     {
-                        PlayerControl.LocalPlayer.MurderPlayer(player);
+                        PlayerControl.LocalPlayer.MurderPlayer(player, MurderResultFlags.Succeeded);
                     }
                 }
             }
