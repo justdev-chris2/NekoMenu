@@ -11,7 +11,7 @@ namespace NekoMenu
     public static class Utils
     {
         public static bool isPlayer => PlayerControl.LocalPlayer != null;
-        public static bool isHost => AmongUsClient.Instance?.NetMode is NetModes.HostGame or NetModes.LocalGame;
+        public static bool isHost => AmongUsClient.Instance?.AmHost ?? false;
         public static bool isLobby => AmongUsClient.Instance?.GameState == InnerNetClient.GameStates.Joined;
         public static bool isGameStarted => AmongUsClient.Instance?.GameState == InnerNetClient.GameStates.Started;
         public static bool isMeeting => MeetingHud.Instance != null;
