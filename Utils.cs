@@ -19,7 +19,7 @@ namespace NekoMenu
         public static int GetCurrentMapID()
         {
             if (GameManager.Instance?.LogicOptions == null) return 0;
-            return (int)GameManager.Instance.LogicOptions.GetByte(ByteOptionNames.MapId);
+            return GameOptionsManager.Instance.CurrentGameOptions.MapId;
         }
         
         public static void CompleteTask(PlayerTask task)
