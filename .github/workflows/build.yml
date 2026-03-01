@@ -1,0 +1,35 @@
+name: Build NekoMenu
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch: # Allow manual triggers
+
+jobs:
+  build:
+    runs-on: windows-latest  # Need Windows for .NET Framework
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v2
+      
+    - name: Setup NuGet
+      uses: NuGet/setup-nuget@v2
+      
+    - name: Restore NuGet packages
+      run: nuget restore NekoMenu.sln
+      
+    - name: Build DLL
+      run: msbuild NekoMenu.sln /p:Configuration=Release /p:Platform="Any CPU"
+      
+    - name: Upload Build Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: NekoMenu-DLL
+        path: bin/Release/*.dll
+        if-no-files-found: error
