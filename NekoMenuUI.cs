@@ -60,7 +60,6 @@ namespace NekoMenu
             NekoCheats.KillSelfCheat();
             NekoCheats.ProtectCheat();
             NekoCheats.ReviveCheat();
-            NekoCheats.FakeRoleCheat();
         }
         
         private void OnGUI()
@@ -198,16 +197,6 @@ namespace NekoMenu
             CheatToggles.noTrackingCooldown = GUILayout.Toggle(CheatToggles.noTrackingCooldown, "No Tracking Cooldown");
             CheatToggles.noTrackingDelay = GUILayout.Toggle(CheatToggles.noTrackingDelay, "No Tracking Delay");
             CheatToggles.endlessTracking = GUILayout.Toggle(CheatToggles.endlessTracking, "Endless Tracking");
-            
-            GUILayout.Space(10);
-            GUILayout.Label("FAKE ROLE", GUI.skin.box);
-            string[] fakeRoles = { "Crewmate", "Impostor", "Engineer", "Scientist", "Shapeshifter" };
-            CheatToggles.selectedFakeRole = GUILayout.SelectionGrid(CheatToggles.selectedFakeRole, fakeRoles, 2);
-            
-            if (GUILayout.Button("Apply Fake Role", GUILayout.Height(25)))
-            {
-                CheatToggles.fakeRole = true;
-            }
         }
         
         private void DrawMovementTab()
@@ -298,12 +287,14 @@ namespace NekoMenu
         
         private void DrawBox(Vector3 pos, float width, float height, Color color, float thickness)
         {
+            // Simple box outline using GUI.Box
             GUI.color = color;
             
-            GUI.DrawTexture(new Rect(pos.x - width/2, pos.y - height/2, width, thickness), Texture2D.whiteTexture);
-            GUI.DrawTexture(new Rect(pos.x - width/2, pos.y + height/2 - thickness, width, thickness), Texture2D.whiteTexture);
-            GUI.DrawTexture(new Rect(pos.x - width/2, pos.y - height/2, thickness, height), Texture2D.whiteTexture);
-            GUI.DrawTexture(new Rect(pos.x + width/2 - thickness, pos.y - height/2, thickness, height), Texture2D.whiteTexture);
+            // Draw four thin boxes for outline
+            GUI.Box(new Rect(pos.x - width/2, pos.y - height/2, width, thickness), "");
+            GUI.Box(new Rect(pos.x - width/2, pos.y + height/2 - thickness, width, thickness), "");
+            GUI.Box(new Rect(pos.x - width/2, pos.y - height/2, thickness, height), "");
+            GUI.Box(new Rect(pos.x + width/2 - thickness, pos.y - height/2, thickness, height), "");
             
             GUI.color = Color.white;
         }
