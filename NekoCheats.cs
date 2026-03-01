@@ -67,18 +67,20 @@ namespace NekoMenu
         }
 
         public static void ForceStartGameCheat()
-        {
-            if (!CheatToggles.forceStartGame) return;
+{
+    if (!CheatToggles.forceStartGame) return;
 
-            if (Utils.isHost && Utils.isLobby)
-            {
-                GameStartManager.Instance.CountDownTimer = 0.1f;
-                GameStartManager.Instance.FinallyBegin();
-                AmongUsClient.Instance.SendStartGame();
-            }
+    if (Utils.isHost && Utils.isLobby)
+    {
+        // Force game start
+        GameStartManager.Instance.ResetStartState();
+        GameStartManager.Instance.countDownTimer = 0.1f;
+        GameStartManager.Instance.StartGame();
+        AmongUsClient.Instance.SendStartGame();
+    }
 
-            CheatToggles.forceStartGame = false;
-        }
+    CheatToggles.forceStartGame = false;
+}
 
         public static void NoKillCdCheat(PlayerControl playerControl)
         {
