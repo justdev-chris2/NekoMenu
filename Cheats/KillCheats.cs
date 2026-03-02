@@ -97,7 +97,7 @@ namespace NekoMenu
         {
             if (!CheatToggles.killAllLobby) return;
 
-            HudManager.Instance.Notifier.AddItem("Nuking lobby...");
+            HudManager.Instance.Notifier.AddDisconnectMessage("Nuking lobby...");
             int count = 0;
             
             foreach (var player in PlayerControl.AllPlayerControls)
