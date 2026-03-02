@@ -11,7 +11,22 @@ namespace NekoMenu
         public static void SendCustomNotification()
         {
             if (!CheatToggles.sendCustomNotification || string.IsNullOrEmpty(CheatToggles.customNotificationText)) return;
-            Utils.SendNotification(CheatToggles.customNotificationText, 5f);
+            
+            string message = CheatToggles.customNotificationText;
+            
+            MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(
+                PlayerControl.LocalPlayer.NetId,
+                (byte)RpcCalls.SetNotifier,
+                SendOption.Reliable,
+                -1
+            );
+            writer.Write(message);
+            writer.Write(5f);
+            AmongUsClient.Instance.FinishRpcImmediately(writer);
+            
+            if (HudManager.Instance != null)
+                HudManager.Instance.Notifier.AddItem(message);
+            
             CheatToggles.sendCustomNotification = false;
         }
 
@@ -23,7 +38,21 @@ namespace NekoMenu
                 .FirstOrDefault(p => p != null && p.PlayerId == CheatToggles.fakeReportTargetId);
             
             if (target != null)
-                Utils.SendNotification($"{target.Data.PlayerName} reported a body", 4f);
+            {
+                string reportMsg = $"{target.Data.PlayerName} reported a body";
+                
+                MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(
+                    PlayerControl.LocalPlayer.NetId,
+                    (byte)RpcCalls.SetNotifier,
+                    SendOption.Reliable,
+                    -1
+                );
+                writer.Write(reportMsg);
+                writer.Write(4f);
+                AmongUsClient.Instance.FinishRpcImmediately(writer);
+                
+                HudManager.Instance.Notifier.AddItem(reportMsg);
+            }
             
             CheatToggles.fakeReport = false;
         }
@@ -33,11 +62,15 @@ namespace NekoMenu
             if (!CheatToggles.teleportAllToMe || PlayerControl.LocalPlayer == null) return;
             
             Vector2 myPos = PlayerControl.LocalPlayer.transform.position;
+            
             foreach (var player in PlayerControl.AllPlayerControls)
             {
                 if (player != null && player != PlayerControl.LocalPlayer)
+                {
                     player.NetTransform.RpcSnapTo(myPos);
+                }
             }
+            
             CheatToggles.teleportAllToMe = false;
         }
 
@@ -47,7 +80,19 @@ namespace NekoMenu
             
             HudManager.Instance.ReportButton.flashAlpha = 1f;
             HudManager.Instance.ReportButton.StartFlash(0.5f);
-            Utils.SendNotification("Emergency meeting button pressed", 3f);
+            
+            MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(
+                PlayerControl.LocalPlayer.NetId,
+                (byte)RpcCalls.SetNotifier,
+                SendOption.Reliable,
+                -1
+            );
+            writer.Write("Emergency meeting button pressed");
+            writer.Write(3f);
+            AmongUsClient.Instance.FinishRpcImmediately(writer);
+            
+            HudManager.Instance.Notifier.AddItem("Emergency meeting button pressed");
+            
             CheatToggles.fakeMeetingFlash = false;
         }
 
@@ -60,7 +105,19 @@ namespace NekoMenu
             
             if (target != null)
             {
-                Utils.SendNotification($"{target.Data.PlayerName} died", 4f);
+                string deathMsg = $"{target.Data.PlayerName} died";
+                
+                MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(
+                    PlayerControl.LocalPlayer.NetId,
+                    (byte)RpcCalls.SetNotifier,
+                    SendOption.Reliable,
+                    -1
+                );
+                writer.Write(deathMsg);
+                writer.Write(4f);
+                AmongUsClient.Instance.FinishRpcImmediately(writer);
+                
+                HudManager.Instance.Notifier.AddItem(deathMsg);
                 
                 if (target == PlayerControl.LocalPlayer)
                 {
@@ -68,14 +125,28 @@ namespace NekoMenu
                     HudManager.Instance.StartCoroutine(HudManager.Instance.CoFadeFullScreen(Color.red, Color.clear, 0.5f, false));
                 }
             }
+            
             CheatToggles.fakeDeathScreen = false;
         }
 
         public static void FakeWinScreenCheat()
         {
             if (!CheatToggles.fakeWinScreen) return;
+            
             string winMsg = CheatToggles.fakeWinTeam == 0 ? "Crewmates Win!" : "Impostors Win!";
-            Utils.SendNotification(winMsg, 5f);
+            
+            MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(
+                PlayerControl.LocalPlayer.NetId,
+                (byte)RpcCalls.SetNotifier,
+                SendOption.Reliable,
+                -1
+            );
+            writer.Write(winMsg);
+            writer.Write(5f);
+            AmongUsClient.Instance.FinishRpcImmediately(writer);
+            
+            HudManager.Instance.Notifier.AddItem(winMsg);
+            
             CheatToggles.fakeWinScreen = false;
         }
     }
