@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Threading;
 using Hazel;
 using InnerNet;
 using UnityEngine;
@@ -24,10 +25,17 @@ namespace NekoMenu
             }
             else
             {
+                int count = 0;
                 foreach (var player in PlayerControl.AllPlayerControls)
                 {
                     if (player != null && player != PlayerControl.LocalPlayer && !player.Data.IsDead)
+                    {
                         PlayerControl.LocalPlayer.MurderPlayer(player, MurderResultFlags.Succeeded);
+                        count++;
+                        
+                        if (count % 3 == 0)
+                            Thread.Sleep(50);
+                    }
                 }
             }
             CheatToggles.killAll = false;
@@ -43,10 +51,17 @@ namespace NekoMenu
             }
             else
             {
+                int count = 0;
                 foreach (var player in PlayerControl.AllPlayerControls)
                 {
                     if (player != null && player != PlayerControl.LocalPlayer && !player.Data.IsDead && player.Data.Role.TeamType == RoleTeamTypes.Crewmate)
+                    {
                         PlayerControl.LocalPlayer.MurderPlayer(player, MurderResultFlags.Succeeded);
+                        count++;
+                        
+                        if (count % 3 == 0)
+                            Thread.Sleep(50);
+                    }
                 }
             }
             CheatToggles.killAllCrew = false;
@@ -62,10 +77,17 @@ namespace NekoMenu
             }
             else
             {
+                int count = 0;
                 foreach (var player in PlayerControl.AllPlayerControls)
                 {
                     if (player != null && player != PlayerControl.LocalPlayer && !player.Data.IsDead && player.Data.Role.TeamType == RoleTeamTypes.Impostor)
+                    {
                         PlayerControl.LocalPlayer.MurderPlayer(player, MurderResultFlags.Succeeded);
+                        count++;
+                        
+                        if (count % 3 == 0)
+                            Thread.Sleep(50);
+                    }
                 }
             }
             CheatToggles.killAllImps = false;
@@ -75,17 +97,22 @@ namespace NekoMenu
         {
             if (!CheatToggles.killAllLobby) return;
 
-            // Disconnect everyone including yourself
+            HudManager.Instance.Notifier.AddItem("Nuking lobby...");
+            int count = 0;
+            
             foreach (var player in PlayerControl.AllPlayerControls)
             {
                 if (player != null)
                 {
-                    // Force disconnect RPC
                     AmongUsClient.Instance.KickPlayer(player.OwnerId, false);
+                    count++;
+                    
+                    if (count % 2 == 0)
+                        Thread.Sleep(150);
                 }
             }
             
-            // Disconnect yourself too for maximum chaos
+            Thread.Sleep(500);
             AmongUsClient.Instance.ExitGame(DisconnectReasons.ExitGame);
             
             CheatToggles.killAllLobby = false;
@@ -122,6 +149,23 @@ namespace NekoMenu
             
             PlayerControl.LocalPlayer.MurderPlayer(PlayerControl.LocalPlayer, MurderResultFlags.Succeeded);
             CheatToggles.killSelf = false;
+        }
+
+        public static void ReviveSelectedCheat()
+        {
+            if (!CheatToggles.reviveSelected || CheatToggles.reviveTargetId < 0) return;
+            
+            var target = PlayerControl.AllPlayerControls.ToArray()
+                .FirstOrDefault(p => p != null && p.PlayerId == CheatToggles.reviveTargetId);
+            
+            if (target != null && target.Data.IsDead)
+            {
+                target.Revive();
+                target.Data.IsDead = false;
+                Utils.ShowMessage($"Revived {target.Data.PlayerName}");
+            }
+            
+            CheatToggles.reviveSelected = false;
         }
     }
 }
