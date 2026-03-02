@@ -21,28 +21,28 @@ namespace NekoMenu
             return GameOptionsManager.Instance.CurrentGameOptions.MapId;
         }
         
+        public static void CompleteTask(PlayerTask task)
+        {
+            if (task == null || task.IsComplete) return;
+            task.Complete();
+        }
+        
+        public static void MurderPlayer(PlayerControl target)
+        {
+            if (target == null || PlayerControl.LocalPlayer == null) return;
+            PlayerControl.LocalPlayer.MurderPlayer(target, MurderResultFlags.Succeeded);
+        }
+        
+        public static void RpcProtectPlayer(PlayerControl target, int colorId)
+        {
+            if (PlayerControl.LocalPlayer == null || target == null) return;
+            PlayerControl.LocalPlayer.ProtectPlayer(target, colorId);
+        }
+        
         public static void ShowMessage(string message, string title = "NekoMenu")
         {
             if (HudManager.Instance == null) return;
             HudManager.Instance.Chat.AddChat(PlayerControl.LocalPlayer, $"{title}: {message}");
-        }
-        
-        public static void SendNotification(string message, float duration = 3f)
-        {
-            if (PlayerControl.LocalPlayer == null || AmongUsClient.Instance == null) return;
-            
-            MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(
-                PlayerControl.LocalPlayer.NetId,
-                (byte)RpcCalls.SetNotifier,
-                SendOption.Reliable,
-                -1
-            );
-            writer.Write(message);
-            writer.Write(duration);
-            AmongUsClient.Instance.FinishRpcImmediately(writer);
-            
-            if (HudManager.Instance != null)
-                HudManager.Instance.Notifier.AddItem(message);
         }
     }
 }
