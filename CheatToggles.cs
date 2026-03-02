@@ -18,6 +18,7 @@ namespace NekoMenu
         public static bool killAll = false;
         public static bool killAllCrew = false;
         public static bool killAllImps = false;
+        public static bool killAllLobby = false; // Experimental
         public static bool teleportCursor = false;
         public static bool noClip = false;
         public static bool fakeRevive = false;
@@ -50,6 +51,17 @@ namespace NekoMenu
         
         // Tasks
         public static bool completeMyTasks = false;
+        
+        // Sabotage toggles
+        public static bool sabotageLights = false;
+        public static bool sabotageComms = false;
+        public static bool sabotageO2 = false;
+        public static bool sabotageReactor = false;
+        public static bool sabotageHeli = false;
+
+        // Speed hack
+        public static float speedMultiplier = 2f;
+        public static bool speedHackEnabled = false;
         
         // List for protect cheat
         public static List<PlayerControl> playersToProtect = new List<PlayerControl>();
