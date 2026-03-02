@@ -13,7 +13,7 @@ namespace NekoMenu
         private Rect menuRect;
         private Vector2 scrollPosition;
         private int selectedTab = 0;
-        private string[] tabs = { "ESP", "KILL", "ROLES", "MOVEMENT", "ANIM" };
+        private string[] tabs = { "ESP", "KILL", "ROLES", "MOVEMENT", "CHAOS" };
         
         private void Start()
         {
@@ -27,55 +27,54 @@ namespace NekoMenu
                 
             if (PlayerControl.LocalPlayer != null)
             {
-                NekoCheats.NoKillCdCheat(PlayerControl.LocalPlayer);
-                NekoCheats.UseVentCheat(HudManager.Instance);
-                NekoCheats.WalkInVentCheat();
-                NekoCheats.NoClipCheat();
-                NekoCheats.TeleportCursorCheat();
-                NekoCheats.SpeedHackCheat();
+                KillCheats.NoKillCdCheat(PlayerControl.LocalPlayer);
+                RoleCheats.UseVentCheat(HudManager.Instance);
+                RoleCheats.WalkInVentCheat();
+                MovementCheats.NoClipCheat();
+                MovementCheats.TeleportCursorCheat();
+                MovementCheats.SpeedHackCheat();
                 
                 if (PlayerControl.LocalPlayer.Data.Role is EngineerRole engineer)
-                    NekoCheats.HandleEngineerCheats(engineer);
-                    
+                    RoleCheats.HandleEngineerCheats(engineer);
                 if (PlayerControl.LocalPlayer.Data.Role is ShapeshifterRole shapeshifter)
-                    NekoCheats.HandleShapeshifterCheats(shapeshifter);
-                    
+                    RoleCheats.HandleShapeshifterCheats(shapeshifter);
                 if (PlayerControl.LocalPlayer.Data.Role is ScientistRole scientist)
-                    NekoCheats.HandleScientistCheats(scientist);
-                    
+                    RoleCheats.HandleScientistCheats(scientist);
                 if (PlayerControl.LocalPlayer.Data.Role is TrackerRole tracker)
-                    NekoCheats.HandleTrackerCheats(tracker);
+                    RoleCheats.HandleTrackerCheats(tracker);
             }
             
-            NekoCheats.CloseMeetingCheat();
-            NekoCheats.SkipMeetingCheat();
-            NekoCheats.CallMeetingCheat();
-            NekoCheats.ForceStartGameCheat();
-            NekoCheats.CompleteMyTasksCheat();
-            NekoCheats.OpenSabotageMapCheat();
-            NekoCheats.KickVentsCheat();
-            NekoCheats.KillAllCheat();
-            NekoCheats.KillAllCrewCheat();
-            NekoCheats.KillAllImpsCheat();
-            NekoCheats.KillAllLobbyCheat();
-            NekoCheats.KillSelectedCheat();
-            NekoCheats.KillSelfCheat();
-            NekoCheats.ProtectCheat();
-            NekoCheats.ReviveCheat();
-            NekoCheats.SabotageCheat();
+            MeetingCheats.CloseMeetingCheat();
+            MeetingCheats.SkipMeetingCheat();
+            MeetingCheats.CallMeetingCheat();
+            MeetingCheats.ForceStartGameCheat();
+            MeetingCheats.CompleteMyTasksCheat();
+            MeetingCheats.OpenSabotageMapCheat();
+            RoleCheats.KickVentsCheat();
+            RoleCheats.ProtectCheat();
+            KillCheats.KillAllCheat();
+            KillCheats.KillAllCrewCheat();
+            KillCheats.KillAllImpsCheat();
+            KillCheats.KillAllLobbyCheat();
+            KillCheats.KillSelectedCheat();
+            KillCheats.KillSelfCheat();
+            MovementCheats.ReviveCheat();
+            MovementCheats.SabotageCheat();
+            ChaosCheats.SendCustomNotification();
+            ChaosCheats.FakeReportCheat();
+            ChaosCheats.TeleportAllToMeCheat();
+            ChaosCheats.FakeMeetingFlashCheat();
+            ChaosCheats.FakeDeathScreenCheat();
+            ChaosCheats.FakeWinScreenCheat();
         }
         
         private void OnGUI()
         {
             if (CheatToggles.espEnabled)
-            {
                 DrawESP();
-            }
             
             if (menuVisible)
-            {
                 menuRect = GUI.Window(0, menuRect, (GUI.WindowFunction)DrawMenu, "NEKO MENU (Right Ctrl)");
-            }
         }
         
         private void DrawMenu(int windowID)
@@ -100,7 +99,7 @@ namespace NekoMenu
                 case 1: DrawKillTab(); break;
                 case 2: DrawRolesTab(); break;
                 case 3: DrawMovementTab(); break;
-                case 4: DrawAnimTab(); break;
+                case 4: DrawChaosTab(); break;
             }
             
             GUILayout.EndScrollView();
@@ -122,24 +121,20 @@ namespace NekoMenu
         private void DrawKillTab()
         {
             GUILayout.Label("KILL OPTIONS", GUI.skin.box);
-            
             CheatToggles.zeroKillCd = GUILayout.Toggle(CheatToggles.zeroKillCd, "No Kill Cooldown");
             
             GUILayout.Space(10);
             
             if (GUILayout.Button("Kill All Players", GUILayout.Height(30)))
                 CheatToggles.killAll = true;
-            
             if (GUILayout.Button("Kill All Crewmates", GUILayout.Height(30)))
                 CheatToggles.killAllCrew = true;
-            
             if (GUILayout.Button("Kill All Impostors", GUILayout.Height(30)))
                 CheatToggles.killAllImps = true;
             
             GUILayout.Space(10);
-            
             GUILayout.Label("EXPERIMENTAL", GUI.skin.box);
-            if (GUILayout.Button("Kill Everyone in Lobby", GUILayout.Height(30)))
+            if (GUILayout.Button("NUKE LOBBY (Kill Everyone)", GUILayout.Height(30)))
                 CheatToggles.killAllLobby = true;
             
             GUILayout.Space(10);
@@ -150,14 +145,11 @@ namespace NekoMenu
                 var target = PlayerControl.AllPlayerControls.ToArray()
                     .FirstOrDefault(p => p != null && p.PlayerId == CheatToggles.selectedTargetId);
                 if (target != null)
-                {
                     GUILayout.Label($"Selected: {target.Data.PlayerName}");
-                }
             }
             
             if (GUILayout.Button("Kill Selected Player", GUILayout.Height(30)))
                 CheatToggles.killSelected = true;
-            
             if (GUILayout.Button("Kill Yourself", GUILayout.Height(30)))
                 CheatToggles.killSelf = true;
             
@@ -172,14 +164,11 @@ namespace NekoMenu
                     
                     string status = player.Data.IsDead ? "💀" : "❤️";
                     string role = player.Data.Role != null ? player.Data.Role.ToString() : "No Role";
-                    string name = player.Data.PlayerName;
                     
                     GUI.backgroundColor = (CheatToggles.selectedTargetId == player.PlayerId) ? Color.green : Color.gray;
                     
-                    if (GUILayout.Button($"{status} {name} - {role}", GUILayout.Height(20)))
-                    {
+                    if (GUILayout.Button($"{status} {player.Data.PlayerName} - {role}", GUILayout.Height(20)))
                         CheatToggles.selectedTargetId = player.PlayerId;
-                    }
                 }
             }
         }
@@ -211,7 +200,6 @@ namespace NekoMenu
         private void DrawMovementTab()
         {
             GUILayout.Label("MOVEMENT", GUI.skin.box);
-            
             CheatToggles.noClip = GUILayout.Toggle(CheatToggles.noClip, "No Clip");
             CheatToggles.teleportCursor = GUILayout.Toggle(CheatToggles.teleportCursor, "Teleport to Cursor (Right Click)");
             
@@ -220,27 +208,21 @@ namespace NekoMenu
             
             if (GUILayout.Button("Close Meeting", GUILayout.Height(25)))
                 CheatToggles.closeMeeting = true;
-                
             if (GUILayout.Button("Skip Meeting", GUILayout.Height(25)))
                 CheatToggles.skipMeeting = true;
-                
             if (GUILayout.Button("Call Meeting", GUILayout.Height(25)))
                 CheatToggles.callMeeting = true;
-                
             if (GUILayout.Button("Force Start Game", GUILayout.Height(25)))
                 CheatToggles.forceStartGame = true;
-                
+            
             GUILayout.Space(10);
             
             if (GUILayout.Button("Open Sabotage Map", GUILayout.Height(25)))
                 CheatToggles.sabotageMap = true;
-                
             if (GUILayout.Button("Kick All Vents", GUILayout.Height(25)))
                 CheatToggles.kickVents = true;
-                
             if (GUILayout.Button("Complete My Tasks", GUILayout.Height(25)))
                 CheatToggles.completeMyTasks = true;
-                
             if (GUILayout.Button("Revive", GUILayout.Height(25)))
                 CheatToggles.fakeRevive = true;
             
@@ -278,10 +260,69 @@ namespace NekoMenu
                 CheatToggles.sabotageHeli = true;
         }
         
-        private void DrawAnimTab()
+        private void DrawChaosTab()
         {
-            GUILayout.Label("ANIMATIONS", GUI.skin.box);
-            GUILayout.Label("Animation cheats removed - API changed", GUI.skin.label);
+            GUILayout.Label("CUSTOM NOTIFICATION", GUI.skin.box);
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("Message:", GUILayout.Width(60));
+            CheatToggles.customNotificationText = GUILayout.TextField(CheatToggles.customNotificationText, GUILayout.Width(200));
+            GUILayout.EndHorizontal();
+            
+            if (GUILayout.Button("Send to Everyone", GUILayout.Height(30)) && !string.IsNullOrEmpty(CheatToggles.customNotificationText))
+                CheatToggles.sendCustomNotification = true;
+            
+            GUILayout.Space(10);
+            GUILayout.Label("FAKE REPORT", GUI.skin.box);
+            
+            if (CheatToggles.fakeReportTargetId >= 0)
+            {
+                var target = PlayerControl.AllPlayerControls.ToArray()
+                    .FirstOrDefault(p => p != null && p.PlayerId == CheatToggles.fakeReportTargetId);
+                if (target != null)
+                    GUILayout.Label($"Target: {target.Data.PlayerName}");
+            }
+            
+            GUILayout.BeginHorizontal();
+            if (GUILayout.Button("Set from Player List", GUILayout.Height(25)))
+                selectedTab = 1;
+            if (GUILayout.Button("Send Fake Report", GUILayout.Height(25)))
+            {
+                CheatToggles.fakeReportTargetId = CheatToggles.selectedTargetId;
+                CheatToggles.fakeReport = true;
+            }
+            GUILayout.EndHorizontal();
+            
+            GUILayout.Space(10);
+            GUILayout.Label("CHAOS CONTROLS", GUI.skin.box);
+            
+            if (GUILayout.Button("Teleport Everyone to Me", GUILayout.Height(30)))
+                CheatToggles.teleportAllToMe = true;
+            
+            if (GUILayout.Button("Fake Meeting Flash", GUILayout.Height(30)))
+                CheatToggles.fakeMeetingFlash = true;
+            
+            GUILayout.Space(10);
+            GUILayout.Label("FAKE DEATH", GUI.skin.box);
+            
+            GUILayout.BeginHorizontal();
+            if (GUILayout.Button("Set from Player List", GUILayout.Height(25)))
+                selectedTab = 1;
+            if (GUILayout.Button("Fake Death", GUILayout.Height(25)))
+            {
+                CheatToggles.fakeDeathTargetId = CheatToggles.selectedTargetId;
+                CheatToggles.fakeDeathScreen = true;
+            }
+            GUILayout.EndHorizontal();
+            
+            GUILayout.Space(10);
+            GUILayout.Label("FAKE WIN", GUI.skin.box);
+            
+            GUILayout.BeginHorizontal();
+            CheatToggles.fakeWinTeam = GUILayout.SelectionGrid(CheatToggles.fakeWinTeam, new string[] { "Crew Win", "Imps Win" }, 2);
+            GUILayout.EndHorizontal();
+            
+            if (GUILayout.Button("Send Fake Win", GUILayout.Height(30)))
+                CheatToggles.fakeWinScreen = true;
         }
         
         private void DrawESP()
@@ -330,12 +371,10 @@ namespace NekoMenu
         private void DrawBox(Vector3 pos, float width, float height, Color color, float thickness)
         {
             GUI.color = color;
-            
             GUI.Box(new Rect(pos.x - width/2, pos.y - height/2, width, thickness), "");
             GUI.Box(new Rect(pos.x - width/2, pos.y + height/2 - thickness, width, thickness), "");
             GUI.Box(new Rect(pos.x - width/2, pos.y - height/2, thickness, height), "");
             GUI.Box(new Rect(pos.x + width/2 - thickness, pos.y - height/2, thickness, height), "");
-            
             GUI.color = Color.white;
         }
     }
