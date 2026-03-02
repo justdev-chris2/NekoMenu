@@ -8,55 +8,6 @@ namespace NekoMenu
 {
     public static class ChaosCheats
     {
-        public static void SendCustomNotification()
-        {
-            if (!CheatToggles.sendCustomNotification || string.IsNullOrEmpty(CheatToggles.customNotificationText)) return;
-            
-            string message = CheatToggles.customNotificationText;
-            
-            MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(
-                PlayerControl.LocalPlayer.NetId,
-                (byte)RpcCalls.SetNotifier,
-                SendOption.Reliable,
-                -1
-            );
-            writer.Write(message);
-            writer.Write(5f);
-            AmongUsClient.Instance.FinishRpcImmediately(writer);
-            
-            if (HudManager.Instance != null)
-                HudManager.Instance.Notifier.AddItem(message);
-            
-            CheatToggles.sendCustomNotification = false;
-        }
-
-        public static void FakeReportCheat()
-        {
-            if (!CheatToggles.fakeReport || CheatToggles.fakeReportTargetId < 0) return;
-            
-            var target = PlayerControl.AllPlayerControls.ToArray()
-                .FirstOrDefault(p => p != null && p.PlayerId == CheatToggles.fakeReportTargetId);
-            
-            if (target != null)
-            {
-                string reportMsg = $"{target.Data.PlayerName} reported a body";
-                
-                MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(
-                    PlayerControl.LocalPlayer.NetId,
-                    (byte)RpcCalls.SetNotifier,
-                    SendOption.Reliable,
-                    -1
-                );
-                writer.Write(reportMsg);
-                writer.Write(4f);
-                AmongUsClient.Instance.FinishRpcImmediately(writer);
-                
-                HudManager.Instance.Notifier.AddItem(reportMsg);
-            }
-            
-            CheatToggles.fakeReport = false;
-        }
-
         public static void TeleportAllToMeCheat()
         {
             if (!CheatToggles.teleportAllToMe || PlayerControl.LocalPlayer == null) return;
@@ -78,86 +29,39 @@ namespace NekoMenu
         {
             if (!CheatToggles.freezeAll || PlayerControl.LocalPlayer == null) return;
             
-            // Your existing freeze code here
-            // (whatever you had for freeze)
+            foreach (var player in PlayerControl.AllPlayerControls)
+            {
+                if (player != null && player != PlayerControl.LocalPlayer && player.MyPhysics != null)
+                {
+                    // Stop their movement completely
+                    player.MyPhysics.body.velocity = Vector2.zero;
+                    player.MyPhysics.body.constraints = RigidbodyConstraints2D.FreezeAll;
+                    
+                    // Keep sending freeze RPC to maintain it
+                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(
+                        player.NetId,
+                        (byte)RpcCalls.SetColor,
+                        SendOption.Reliable,
+                        -1
+                    );
+                    writer.Write(player.cosmetics.ColorId);
+                    AmongUsClient.Instance.FinishRpcImmediately(writer);
+                }
+            }
             
             CheatToggles.freezeAll = false;
         }
 
-        public static void FakeMeetingFlashCheat()
+        public static void UnfreezeAllCheat()
         {
-            if (!CheatToggles.fakeMeetingFlash || HudManager.Instance == null) return;
-            
-            HudManager.Instance.ReportButton.flashAlpha = 1f;
-            HudManager.Instance.ReportButton.StartFlash(0.5f);
-            
-            MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(
-                PlayerControl.LocalPlayer.NetId,
-                (byte)RpcCalls.SetNotifier,
-                SendOption.Reliable,
-                -1
-            );
-            writer.Write("Emergency meeting button pressed");
-            writer.Write(3f);
-            AmongUsClient.Instance.FinishRpcImmediately(writer);
-            
-            HudManager.Instance.Notifier.AddItem("Emergency meeting button pressed");
-            
-            CheatToggles.fakeMeetingFlash = false;
-        }
-
-        public static void FakeDeathScreenCheat()
-        {
-            if (!CheatToggles.fakeDeathScreen || CheatToggles.fakeDeathTargetId < 0) return;
-            
-            var target = PlayerControl.AllPlayerControls.ToArray()
-                .FirstOrDefault(p => p != null && p.PlayerId == CheatToggles.fakeDeathTargetId);
-            
-            if (target != null)
+            foreach (var player in PlayerControl.AllPlayerControls)
             {
-                string deathMsg = $"{target.Data.PlayerName} died";
-                
-                MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(
-                    PlayerControl.LocalPlayer.NetId,
-                    (byte)RpcCalls.SetNotifier,
-                    SendOption.Reliable,
-                    -1
-                );
-                writer.Write(deathMsg);
-                writer.Write(4f);
-                AmongUsClient.Instance.FinishRpcImmediately(writer);
-                
-                HudManager.Instance.Notifier.AddItem(deathMsg);
-                
-                if (target == PlayerControl.LocalPlayer)
+                if (player != null && player.MyPhysics != null)
                 {
-                    HudManager.Instance.FullScreen.color = new Color(1f, 0f, 0f, 0.5f);
-                    HudManager.Instance.StartCoroutine(HudManager.Instance.CoFadeFullScreen(Color.red, Color.clear, 0.5f, false));
+                    // Restore movement
+                    player.MyPhysics.body.constraints = RigidbodyConstraints2D.None;
                 }
             }
-            
-            CheatToggles.fakeDeathScreen = false;
-        }
-
-        public static void FakeWinScreenCheat()
-        {
-            if (!CheatToggles.fakeWinScreen) return;
-            
-            string winMsg = CheatToggles.fakeWinTeam == 0 ? "Crewmates Win!" : "Impostors Win!";
-            
-            MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(
-                PlayerControl.LocalPlayer.NetId,
-                (byte)RpcCalls.SetNotifier,
-                SendOption.Reliable,
-                -1
-            );
-            writer.Write(winMsg);
-            writer.Write(5f);
-            AmongUsClient.Instance.FinishRpcImmediately(writer);
-            
-            HudManager.Instance.Notifier.AddItem(winMsg);
-            
-            CheatToggles.fakeWinScreen = false;
         }
     }
 }
