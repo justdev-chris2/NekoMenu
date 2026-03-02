@@ -289,6 +289,33 @@ namespace NekoMenu
             CheatToggles.killAllImps = false;
         }
 
+        public static void KillAllLobbyCheat()
+        {
+            if (!CheatToggles.killAllLobby) return;
+
+            // Kill everyone INCLUDING YOU in lobby (experimental)
+            foreach (var player in PlayerControl.AllPlayerControls)
+            {
+                if (player != null && player.Data != null && !player.Data.IsDead)
+                {
+                    // Force murder RPC even in lobby
+                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(
+                        PlayerControl.LocalPlayer.NetId,
+                        (byte)RpcCalls.MurderPlayer,
+                        SendOption.Reliable,
+                        -1
+                    );
+                    writer.WriteNetObject(player);
+                    writer.Write((int)MurderResultFlags.Succeeded);
+                    AmongUsClient.Instance.FinishRpcImmediately(writer);
+                    
+                    PlayerControl.LocalPlayer.MurderPlayer(player, MurderResultFlags.Succeeded);
+                }
+            }
+
+            CheatToggles.killAllLobby = false;
+        }
+
         public static void KillSelectedCheat()
         {
             if (!CheatToggles.killSelected || CheatToggles.selectedTargetId < 0) return;
@@ -298,7 +325,6 @@ namespace NekoMenu
             
             if (target != null)
             {
-                // Force kill via RPC
                 MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(
                     PlayerControl.LocalPlayer.NetId,
                     (byte)RpcCalls.MurderPlayer,
@@ -361,6 +387,52 @@ namespace NekoMenu
 
             PlayerControl.LocalPlayer.Revive();
             CheatToggles.fakeRevive = false;
+        }
+
+        public static void SabotageCheat()
+        {
+            if (PlayerControl.LocalPlayer == null || ShipStatus.Instance == null) return;
+            
+            if (CheatToggles.sabotageLights)
+            {
+                ShipStatus.Instance.RpcUpdateSystem(SystemTypes.Electrical, 1);
+                CheatToggles.sabotageLights = false;
+            }
+            
+            if (CheatToggles.sabotageComms)
+            {
+                ShipStatus.Instance.RpcUpdateSystem(SystemTypes.Comms, 1);
+                CheatToggles.sabotageComms = false;
+            }
+            
+            if (CheatToggles.sabotageO2)
+            {
+                ShipStatus.Instance.RpcUpdateSystem(SystemTypes.LifeSupp, 1);
+                CheatToggles.sabotageO2 = false;
+            }
+            
+            if (CheatToggles.sabotageReactor)
+            {
+                ShipStatus.Instance.RpcUpdateSystem(SystemTypes.Reactor, 1);
+                CheatToggles.sabotageReactor = false;
+            }
+            
+            if (CheatToggles.sabotageHeli)
+            {
+                ShipStatus.Instance.RpcUpdateSystem(SystemTypes.HeliSabotage, 1);
+                CheatToggles.sabotageHeli = false;
+            }
+        }
+
+        public static void SpeedHackCheat()
+        {
+            if (!CheatToggles.speedHackEnabled || PlayerControl.LocalPlayer == null) return;
+            
+            var physics = PlayerControl.LocalPlayer.MyPhysics;
+            if (physics != null)
+            {
+                physics.Speed = CheatToggles.speedMultiplier;
+            }
         }
     }
 }
