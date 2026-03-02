@@ -23,6 +23,8 @@ namespace NekoMenu
         public static bool killAllCrew = false;
         public static bool killAllImps = false;
         public static bool killAllLobby = false;
+        public static bool reviveSelected = false;
+        public static int reviveTargetId = -1;
         
         // Role toggles
         public static bool endlessVentTime = false;
