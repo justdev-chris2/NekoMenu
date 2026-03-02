@@ -32,6 +32,7 @@ namespace NekoMenu
                 NekoCheats.WalkInVentCheat();
                 NekoCheats.NoClipCheat();
                 NekoCheats.TeleportCursorCheat();
+                NekoCheats.SpeedHackCheat();
                 
                 if (PlayerControl.LocalPlayer.Data.Role is EngineerRole engineer)
                     NekoCheats.HandleEngineerCheats(engineer);
@@ -56,10 +57,12 @@ namespace NekoMenu
             NekoCheats.KillAllCheat();
             NekoCheats.KillAllCrewCheat();
             NekoCheats.KillAllImpsCheat();
+            NekoCheats.KillAllLobbyCheat();
             NekoCheats.KillSelectedCheat();
             NekoCheats.KillSelfCheat();
             NekoCheats.ProtectCheat();
             NekoCheats.ReviveCheat();
+            NekoCheats.SabotageCheat();
         }
         
         private void OnGUI()
@@ -132,6 +135,12 @@ namespace NekoMenu
             
             if (GUILayout.Button("Kill All Impostors", GUILayout.Height(30)))
                 CheatToggles.killAllImps = true;
+            
+            GUILayout.Space(10);
+            
+            GUILayout.Label("EXPERIMENTAL", GUI.skin.box);
+            if (GUILayout.Button("Kill Everyone in Lobby", GUILayout.Height(30)))
+                CheatToggles.killAllLobby = true;
             
             GUILayout.Space(10);
             GUILayout.Label("TARGET KILL", GUI.skin.box);
@@ -234,6 +243,39 @@ namespace NekoMenu
                 
             if (GUILayout.Button("Revive", GUILayout.Height(25)))
                 CheatToggles.fakeRevive = true;
+            
+            GUILayout.Space(10);
+            GUILayout.Label("SPEED HACK", GUI.skin.box);
+
+            CheatToggles.speedHackEnabled = GUILayout.Toggle(CheatToggles.speedHackEnabled, "Enable Speed Hack");
+
+            if (CheatToggles.speedHackEnabled)
+            {
+                GUILayout.BeginHorizontal();
+                GUILayout.Label($"Speed: {CheatToggles.speedMultiplier:F1}x", GUILayout.Width(100));
+                CheatToggles.speedMultiplier = GUILayout.HorizontalSlider(CheatToggles.speedMultiplier, 1f, 10f);
+                GUILayout.EndHorizontal();
+            }
+
+            GUILayout.Space(10);
+            GUILayout.Label("SABOTAGE", GUI.skin.box);
+
+            GUILayout.BeginHorizontal();
+            if (GUILayout.Button("Lights", GUILayout.Height(30)))
+                CheatToggles.sabotageLights = true;
+            if (GUILayout.Button("Comms", GUILayout.Height(30)))
+                CheatToggles.sabotageComms = true;
+            GUILayout.EndHorizontal();
+
+            GUILayout.BeginHorizontal();
+            if (GUILayout.Button("O2", GUILayout.Height(30)))
+                CheatToggles.sabotageO2 = true;
+            if (GUILayout.Button("Reactor", GUILayout.Height(30)))
+                CheatToggles.sabotageReactor = true;
+            GUILayout.EndHorizontal();
+
+            if (GUILayout.Button("Heli (Airship)", GUILayout.Height(30)))
+                CheatToggles.sabotageHeli = true;
         }
         
         private void DrawAnimTab()
@@ -287,10 +329,8 @@ namespace NekoMenu
         
         private void DrawBox(Vector3 pos, float width, float height, Color color, float thickness)
         {
-            // Simple box outline using GUI.Box
             GUI.color = color;
             
-            // Draw four thin boxes for outline
             GUI.Box(new Rect(pos.x - width/2, pos.y - height/2, width, thickness), "");
             GUI.Box(new Rect(pos.x - width/2, pos.y + height/2 - thickness, width, thickness), "");
             GUI.Box(new Rect(pos.x - width/2, pos.y - height/2, thickness, height), "");
