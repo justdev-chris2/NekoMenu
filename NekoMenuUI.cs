@@ -61,13 +61,8 @@ namespace NekoMenu
             KillCheats.ReviveSelectedCheat();
             MovementCheats.ReviveCheat();
             MovementCheats.SabotageCheat();
-            ChaosCheats.SendCustomNotification();
-            ChaosCheats.FakeReportCheat();
             ChaosCheats.TeleportAllToMeCheat();
             ChaosCheats.FreezeAllCheat();
-            ChaosCheats.FakeMeetingFlashCheat();
-            ChaosCheats.FakeDeathScreenCheat();
-            ChaosCheats.FakeWinScreenCheat();
         }
         
         private void OnGUI()
