@@ -60,11 +60,13 @@ namespace NekoMenu
             KillCheats.KillSelfCheat();
             MovementCheats.ReviveCheat();
             MovementCheats.SabotageCheat();
-            
-            if (CheatToggles.freezeEveryone)
-                ChaosCheats.FreezeEveryoneCheat();
-            if (CheatToggles.unfreezeEveryone)
-                ChaosCheats.UnfreezeEveryoneCheat();
+            ChaosCheats.SendCustomNotification();
+            ChaosCheats.FakeReportCheat();
+            ChaosCheats.TeleportAllToMeCheat();
+            ChaosCheats.FreezeAllCheat();
+            ChaosCheats.FakeMeetingFlashCheat();
+            ChaosCheats.FakeDeathScreenCheat();
+            ChaosCheats.FakeWinScreenCheat();
         }
         
         private void OnGUI()
@@ -261,11 +263,72 @@ namespace NekoMenu
         
         private void DrawChaosTab()
         {
-            GUILayout.Label("FREEZE CHAOS", GUI.skin.box);
-            if (GUILayout.Button("Freeze Everyone in Place", GUILayout.Height(30)))
-                CheatToggles.freezeEveryone = true;
-            if (GUILayout.Button("Unfreeze Everyone", GUILayout.Height(30)))
-                CheatToggles.unfreezeEveryone = true;
+            GUILayout.Label("CUSTOM NOTIFICATION", GUI.skin.box);
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("Message:", GUILayout.Width(60));
+            CheatToggles.customNotificationText = GUILayout.TextField(CheatToggles.customNotificationText, GUILayout.Width(200));
+            GUILayout.EndHorizontal();
+            
+            if (GUILayout.Button("Send to Everyone", GUILayout.Height(30)) && !string.IsNullOrEmpty(CheatToggles.customNotificationText))
+                CheatToggles.sendCustomNotification = true;
+            
+            GUILayout.Space(10);
+            GUILayout.Label("FAKE REPORT", GUI.skin.box);
+            
+            if (CheatToggles.fakeReportTargetId >= 0)
+            {
+                var target = PlayerControl.AllPlayerControls.ToArray()
+                    .FirstOrDefault(p => p != null && p.PlayerId == CheatToggles.fakeReportTargetId);
+                if (target != null)
+                    GUILayout.Label($"Target: {target.Data.PlayerName}");
+            }
+            
+            GUILayout.BeginHorizontal();
+            if (GUILayout.Button("Set from Player List", GUILayout.Height(25)))
+                selectedTab = 1;
+            if (GUILayout.Button("Send Fake Report", GUILayout.Height(25)))
+            {
+                CheatToggles.fakeReportTargetId = CheatToggles.selectedTargetId;
+                CheatToggles.fakeReport = true;
+            }
+            GUILayout.EndHorizontal();
+            
+            GUILayout.Space(10);
+            GUILayout.Label("CHAOS CONTROLS", GUI.skin.box);
+            
+            // Teleport button
+            if (GUILayout.Button("Teleport Everyone to Me", GUILayout.Height(30)))
+                CheatToggles.teleportAllToMe = true;
+            
+            // Freeze button
+            if (GUILayout.Button("Freeze Everyone", GUILayout.Height(30)))
+                CheatToggles.freezeAll = true;
+            
+            if (GUILayout.Button("Fake Meeting Flash", GUILayout.Height(30)))
+                CheatToggles.fakeMeetingFlash = true;
+            
+            GUILayout.Space(10);
+            GUILayout.Label("FAKE DEATH", GUI.skin.box);
+            
+            GUILayout.BeginHorizontal();
+            if (GUILayout.Button("Set from Player List", GUILayout.Height(25)))
+                selectedTab = 1;
+            if (GUILayout.Button("Fake Death", GUILayout.Height(25)))
+            {
+                CheatToggles.fakeDeathTargetId = CheatToggles.selectedTargetId;
+                CheatToggles.fakeDeathScreen = true;
+            }
+            GUILayout.EndHorizontal();
+            
+            GUILayout.Space(10);
+            GUILayout.Label("FAKE WIN", GUI.skin.box);
+            
+            GUILayout.BeginHorizontal();
+            CheatToggles.fakeWinTeam = GUILayout.SelectionGrid(CheatToggles.fakeWinTeam, new string[] { "Crew Win", "Imps Win" }, 2);
+            GUILayout.EndHorizontal();
+            
+            if (GUILayout.Button("Send Fake Win", GUILayout.Height(30)))
+                CheatToggles.fakeWinScreen = true;
         }
         
         private void DrawESP()
