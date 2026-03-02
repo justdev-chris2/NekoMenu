@@ -75,23 +75,19 @@ namespace NekoMenu
         {
             if (!CheatToggles.killAllLobby) return;
 
+            // Disconnect everyone including yourself
             foreach (var player in PlayerControl.AllPlayerControls)
             {
-                if (player != null && player.Data != null && !player.Data.IsDead)
+                if (player != null)
                 {
-                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(
-                        PlayerControl.LocalPlayer.NetId,
-                        (byte)RpcCalls.MurderPlayer,
-                        SendOption.Reliable,
-                        -1
-                    );
-                    writer.WriteNetObject(player);
-                    writer.Write((int)MurderResultFlags.Succeeded);
-                    AmongUsClient.Instance.FinishRpcImmediately(writer);
-                    
-                    PlayerControl.LocalPlayer.MurderPlayer(player, MurderResultFlags.Succeeded);
+                    // Force disconnect RPC
+                    AmongUsClient.Instance.KickPlayer(player.OwnerId, false);
                 }
             }
+            
+            // Disconnect yourself too for maximum chaos
+            AmongUsClient.Instance.ExitGame(DisconnectReasons.ExitGame);
+            
             CheatToggles.killAllLobby = false;
         }
 
@@ -123,6 +119,7 @@ namespace NekoMenu
         public static void KillSelfCheat()
         {
             if (!CheatToggles.killSelf || PlayerControl.LocalPlayer == null) return;
+            
             PlayerControl.LocalPlayer.MurderPlayer(PlayerControl.LocalPlayer, MurderResultFlags.Succeeded);
             CheatToggles.killSelf = false;
         }
