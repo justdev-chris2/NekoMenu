@@ -59,18 +59,9 @@ namespace NekoMenu
         public static bool sabotageReactor = false;
         public static bool sabotageHeli = false;
         
-        // Chaos toggles
-        public static string customNotificationText = "";
-        public static bool sendCustomNotification = false;
-        public static bool fakeReport = false;
-        public static int fakeReportTargetId = -1;
-        public static bool teleportAllToMe = false;
-        public static bool swapNames = false;
-        public static bool fakeMeetingFlash = false;
-        public static bool fakeDeathScreen = false;
-        public static int fakeDeathTargetId = -1;
-        public static bool fakeWinScreen = false;
-        public static int fakeWinTeam = 0;
+        // Freeze chaos
+        public static bool freezeEveryone = false;
+        public static bool unfreezeEveryone = false;
         
         // Protect list
         public static List<PlayerControl> playersToProtect = new List<PlayerControl>();
