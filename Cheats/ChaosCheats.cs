@@ -35,7 +35,7 @@ namespace NekoMenu
                 // Keep snapping them back to frozen positions
                 for (int i = 0; i < players.Length; i++)
                 {
-                    if (players[i] != null && frozenPositions[i] != null)
+                    if (players[i] != null && i < frozenPositions.Length)
                     {
                         players[i].NetTransform.RpcSnapTo(frozenPositions[i]);
                     }
