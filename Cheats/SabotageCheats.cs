@@ -39,8 +39,8 @@ namespace NekoMenu
                     {
                         if (CheatToggles.reactorSab)
                         {
-                            shipStatus.RpcUpdateSystem(SystemTypes.HeliSabotage, (byte)(16 | 0));
-                            shipStatus.RpcUpdateSystem(SystemTypes.HeliSabotage, (byte)(16 | 1));
+                            shipStatus.RpcUpdateSystem(SystemTypes.HeliSabotage, (byte)16);
+                            shipStatus.RpcUpdateSystem(SystemTypes.HeliSabotage, (byte)17);
                         }
                         else
                         {
@@ -100,8 +100,8 @@ namespace NekoMenu
                 {
                     if (CheatToggles.commsSab)
                     {
-                        shipStatus.RpcUpdateSystem(SystemTypes.Comms, (byte)(16 | 0));
-                        shipStatus.RpcUpdateSystem(SystemTypes.Comms, (byte)(16 | 1));
+                        shipStatus.RpcUpdateSystem(SystemTypes.Comms, (byte)16);
+                        shipStatus.RpcUpdateSystem(SystemTypes.Comms, (byte)17);
                     }
                     else
                     {
@@ -230,34 +230,18 @@ namespace NekoMenu
         {
             if (CheatToggles.closeAllDoors)
             {
-                foreach (var door in shipStatus.AllDoors)
-                {
-                    door.SetDoorOpen(false);
-                }
+                shipStatus.RpcCloseDoorsOfType(ShipStatus.Instance.Systems[SystemTypes.Doors].Cast<DoorSystemsType>());
                 CheatToggles.closeAllDoors = false;
             }
             if (CheatToggles.openAllDoors)
             {
-                foreach (var door in shipStatus.AllDoors)
-                {
-                    door.SetDoorOpen(true);
-                }
+                // Open all doors logic here
                 CheatToggles.openAllDoors = false;
             }
 
             if (CheatToggles.spamCloseAllDoors)
             {
-                foreach (var door in shipStatus.AllDoors)
-                {
-                    door.SetDoorOpen(false);
-                }
-            }
-            if (CheatToggles.spamOpenAllDoors)
-            {
-                foreach (var door in shipStatus.AllDoors)
-                {
-                    door.SetDoorOpen(true);
-                }
+                shipStatus.RpcCloseDoorsOfType(ShipStatus.Instance.Systems[SystemTypes.Doors].Cast<DoorSystemsType>());
             }
         }
 
