@@ -6,7 +6,7 @@ namespace NekoMenu
     public static class CheatToggles
     {
         // ESP Toggles
-        public static bool espEnabled = false;
+        public static bool espEnabled = true;
         public static bool showGhosts = true;
         public static bool showImpostors = true;
         public static bool showCrewmates = true;
@@ -57,8 +57,8 @@ namespace NekoMenu
         public static bool speedHackEnabled = false;
         public static float speedMultiplier = 2f;
         public static bool fakeRevive = false;
-    
-        // Sabotage toggles (updated)
+        
+        // Sabotage toggles
         public static bool reactorSab = false;
         public static bool oxygenSab = false;
         public static bool commsSab = false;
