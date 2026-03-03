@@ -52,6 +52,7 @@ namespace NekoMenu
             MeetingCheats.OpenSabotageMapCheat();
             RoleCheats.KickVentsCheat();
             RoleCheats.ProtectCheat();
+            RoleCheats.ChangeRoleCheat();
             KillCheats.KillAllCheat();
             KillCheats.KillAllCrewCheat();
             KillCheats.KillAllImpsCheat();
@@ -178,28 +179,37 @@ namespace NekoMenu
         }
         
         private void DrawRolesTab()
-        {
-            GUILayout.Label("ENGINEER", GUI.skin.box);
-            CheatToggles.endlessVentTime = GUILayout.Toggle(CheatToggles.endlessVentTime, "Endless Vent Time");
-            CheatToggles.noVentCooldown = GUILayout.Toggle(CheatToggles.noVentCooldown, "No Vent Cooldown");
-            CheatToggles.useVents = GUILayout.Toggle(CheatToggles.useVents, "Use Vents (Any Role)");
-            CheatToggles.walkVent = GUILayout.Toggle(CheatToggles.walkVent, "Walk in Vents");
-            
-            GUILayout.Space(10);
-            GUILayout.Label("SHAPESHIFTER", GUI.skin.box);
-            CheatToggles.endlessSsDuration = GUILayout.Toggle(CheatToggles.endlessSsDuration, "Endless Shapeshift");
-            
-            GUILayout.Space(10);
-            GUILayout.Label("SCIENTIST", GUI.skin.box);
-            CheatToggles.noVitalsCooldown = GUILayout.Toggle(CheatToggles.noVitalsCooldown, "No Vitals Cooldown");
-            CheatToggles.endlessBattery = GUILayout.Toggle(CheatToggles.endlessBattery, "Endless Battery");
-            
-            GUILayout.Space(10);
-            GUILayout.Label("TRACKER", GUI.skin.box);
-            CheatToggles.noTrackingCooldown = GUILayout.Toggle(CheatToggles.noTrackingCooldown, "No Tracking Cooldown");
-            CheatToggles.noTrackingDelay = GUILayout.Toggle(CheatToggles.noTrackingDelay, "No Tracking Delay");
-            CheatToggles.endlessTracking = GUILayout.Toggle(CheatToggles.endlessTracking, "Endless Tracking");
-        }
+{
+    GUILayout.Label("ENGINEER", GUI.skin.box);
+    CheatToggles.endlessVentTime = GUILayout.Toggle(CheatToggles.endlessVentTime, "Endless Vent Time");
+    CheatToggles.noVentCooldown = GUILayout.Toggle(CheatToggles.noVentCooldown, "No Vent Cooldown");
+    CheatToggles.useVents = GUILayout.Toggle(CheatToggles.useVents, "Use Vents (Any Role)");
+    CheatToggles.walkVent = GUILayout.Toggle(CheatToggles.walkVent, "Walk in Vents");
+    
+    GUILayout.Space(10);
+    GUILayout.Label("SHAPESHIFTER", GUI.skin.box);
+    CheatToggles.endlessSsDuration = GUILayout.Toggle(CheatToggles.endlessSsDuration, "Endless Shapeshift");
+    
+    GUILayout.Space(10);
+    GUILayout.Label("SCIENTIST", GUI.skin.box);
+    CheatToggles.noVitalsCooldown = GUILayout.Toggle(CheatToggles.noVitalsCooldown, "No Vitals Cooldown");
+    CheatToggles.endlessBattery = GUILayout.Toggle(CheatToggles.endlessBattery, "Endless Battery");
+    
+    GUILayout.Space(10);
+    GUILayout.Label("TRACKER", GUI.skin.box);
+    CheatToggles.noTrackingCooldown = GUILayout.Toggle(CheatToggles.noTrackingCooldown, "No Tracking Cooldown");
+    CheatToggles.noTrackingDelay = GUILayout.Toggle(CheatToggles.noTrackingDelay, "No Tracking Delay");
+    CheatToggles.endlessTracking = GUILayout.Toggle(CheatToggles.endlessTracking, "Endless Tracking");
+    
+    GUILayout.Space(10);
+    GUILayout.Label("ROLE CHANGER", GUI.skin.box);
+    
+    string[] roles = { "Crewmate", "Impostor", "Engineer", "Scientist", "Shapeshifter", "Phantom", "Tracker", "Noisemaker" };
+    CheatToggles.selectedRoleIndex = GUILayout.SelectionGrid(CheatToggles.selectedRoleIndex, roles, 2);
+    
+    if (GUILayout.Button("Change My Role", GUILayout.Height(30)))
+        CheatToggles.changeRole = true;
+}
         
         private void DrawMovementTab()
         {
