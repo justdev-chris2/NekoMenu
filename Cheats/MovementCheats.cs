@@ -33,36 +33,5 @@ namespace NekoMenu
             PlayerControl.LocalPlayer.Revive();
             CheatToggles.fakeRevive = false;
         }
-
-        public static void SabotageCheat()
-        {
-            if (PlayerControl.LocalPlayer == null || ShipStatus.Instance == null) return;
-            
-            if (CheatToggles.sabotageLights)
-            {
-                ShipStatus.Instance.RpcUpdateSystem(SystemTypes.Electrical, 1);
-                CheatToggles.sabotageLights = false;
-            }
-            if (CheatToggles.sabotageComms)
-            {
-                ShipStatus.Instance.RpcUpdateSystem(SystemTypes.Comms, 1);
-                CheatToggles.sabotageComms = false;
-            }
-            if (CheatToggles.sabotageO2)
-            {
-                ShipStatus.Instance.RpcUpdateSystem(SystemTypes.LifeSupp, 1);
-                CheatToggles.sabotageO2 = false;
-            }
-            if (CheatToggles.sabotageReactor)
-            {
-                ShipStatus.Instance.RpcUpdateSystem(SystemTypes.Reactor, 1);
-                CheatToggles.sabotageReactor = false;
-            }
-            if (CheatToggles.sabotageHeli)
-            {
-                ShipStatus.Instance.RpcUpdateSystem(SystemTypes.HeliSabotage, 1);
-                CheatToggles.sabotageHeli = false;
-            }
-        }
     }
 }
