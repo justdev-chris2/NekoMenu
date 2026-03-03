@@ -14,6 +14,7 @@ namespace NekoMenu
         public static bool isLobby => AmongUsClient.Instance?.GameState == InnerNetClient.GameStates.Joined;
         public static bool isGameStarted => AmongUsClient.Instance?.GameState == InnerNetClient.GameStates.Started;
         public static bool isMeeting => MeetingHud.Instance != null;
+        public static bool isShip => ShipStatus.Instance != null;
         
         public static int GetCurrentMapID()
         {
