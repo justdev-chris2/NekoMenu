@@ -115,12 +115,8 @@ namespace NekoMenu
                 case 2: newRole = RoleTypes.Engineer; break;
                 case 3: newRole = RoleTypes.Scientist; break;
                 case 4: newRole = RoleTypes.Shapeshifter; break;
-                case 5: newRole = RoleTypes.Phantom; break;
-                case 6: newRole = RoleTypes.Tracker; break;
-                case 7: newRole = RoleTypes.Noisemaker; break;
             }
             
-            // Send RPC to change role
             MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(
                 player.NetId,
                 (byte)RpcCalls.SetRole,
@@ -130,7 +126,6 @@ namespace NekoMenu
             writer.Write((ushort)newRole);
             AmongUsClient.Instance.FinishRpcImmediately(writer);
             
-            // Apply locally
             player.Data.Role = RoleManager.Instance.GetRole(newRole);
             
             Utils.ShowMessage($"Role changed to {newRole}");
