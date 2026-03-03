@@ -27,18 +27,6 @@ namespace NekoMenu
             task.Complete();
         }
         
-        public static void MurderPlayer(PlayerControl target)
-        {
-            if (target == null || PlayerControl.LocalPlayer == null) return;
-            PlayerControl.LocalPlayer.MurderPlayer(target, MurderResultFlags.Succeeded);
-        }
-        
-        public static void RpcProtectPlayer(PlayerControl target, int colorId)
-        {
-            if (PlayerControl.LocalPlayer == null || target == null) return;
-            PlayerControl.LocalPlayer.ProtectPlayer(target, colorId);
-        }
-        
         public static void ShowMessage(string message, string title = "NekoMenu")
         {
             if (HudManager.Instance == null) return;
