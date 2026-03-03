@@ -20,7 +20,7 @@ namespace NekoMenu
             {
                 case 2:
                 {
-                    var labSys = shipStatus.Systems[SystemTypes.Laboratory].Cast<ReactorSystemType>();
+                    var labSys = shipStatus.Systems[SystemTypes.Laboratory].TryCast<ReactorSystemType>();
 
                     if (CheatToggles.reactorSab != _reactorSab)
                     {
@@ -28,12 +28,13 @@ namespace NekoMenu
                         _reactorSab = CheatToggles.reactorSab;
                     }
 
-                    CheatToggles.reactorSab = _reactorSab = labSys.IsActive;
+                    if (labSys != null)
+                        CheatToggles.reactorSab = _reactorSab = labSys.IsActive;
                     break;
                 }
                 case 4:
                 {
-                    var heliSys = shipStatus.Systems[SystemTypes.HeliSabotage].Cast<HeliSabotageSystem>();
+                    var heliSys = shipStatus.Systems[SystemTypes.HeliSabotage].TryCast<HeliSabotageSystem>();
 
                     if (CheatToggles.reactorSab != _reactorSab)
                     {
@@ -50,12 +51,13 @@ namespace NekoMenu
                         _reactorSab = CheatToggles.reactorSab;
                     }
 
-                    CheatToggles.reactorSab = _reactorSab = heliSys.IsActive;
+                    if (heliSys != null)
+                        CheatToggles.reactorSab = _reactorSab = heliSys.IsActive;
                     break;
                 }
                 default:
                 {
-                    var reactorSys = shipStatus.Systems[SystemTypes.Reactor].Cast<ReactorSystemType>();
+                    var reactorSys = shipStatus.Systems[SystemTypes.Reactor].TryCast<ReactorSystemType>();
 
                     if (CheatToggles.reactorSab != _reactorSab)
                     {
@@ -63,7 +65,8 @@ namespace NekoMenu
                         _reactorSab = CheatToggles.reactorSab;
                     }
 
-                    CheatToggles.reactorSab = _reactorSab = reactorSys.IsActive;
+                    if (reactorSys != null)
+                        CheatToggles.reactorSab = _reactorSab = reactorSys.IsActive;
                     break;
                 }
             }
@@ -73,7 +76,7 @@ namespace NekoMenu
         {
             if (mapId != 4 && mapId != 2 && mapId != 5)
             {
-                var oxygenSys = shipStatus.Systems[SystemTypes.LifeSupp].Cast<LifeSuppSystemType>();
+                var oxygenSys = shipStatus.Systems[SystemTypes.LifeSupp].TryCast<LifeSuppSystemType>();
 
                 if (CheatToggles.oxygenSab != _oxygenSab)
                 {
@@ -81,7 +84,8 @@ namespace NekoMenu
                     _oxygenSab = CheatToggles.oxygenSab;
                 }
 
-                CheatToggles.oxygenSab = _oxygenSab = oxygenSys.IsActive;
+                if (oxygenSys != null)
+                    CheatToggles.oxygenSab = _oxygenSab = oxygenSys.IsActive;
                 return;
             }
 
@@ -94,7 +98,7 @@ namespace NekoMenu
         {
             if (mapId is 1 or 5)
             {
-                var hqCommsSys = shipStatus.Systems[SystemTypes.Comms].Cast<HqHudSystemType>();
+                var hqCommsSys = shipStatus.Systems[SystemTypes.Comms].TryCast<HqHudSystemType>();
 
                 if (CheatToggles.commsSab != _commsSab)
                 {
@@ -111,11 +115,12 @@ namespace NekoMenu
                     _commsSab = CheatToggles.commsSab;
                 }
 
-                CheatToggles.commsSab = _commsSab = hqCommsSys.IsActive;
+                if (hqCommsSys != null)
+                    CheatToggles.commsSab = _commsSab = hqCommsSys.IsActive;
             }
             else
             {
-                var commsSys = shipStatus.Systems[SystemTypes.Comms].Cast<HudOverrideSystemType>();
+                var commsSys = shipStatus.Systems[SystemTypes.Comms].TryCast<HudOverrideSystemType>();
 
                 if (CheatToggles.commsSab != _commsSab)
                 {
@@ -123,7 +128,8 @@ namespace NekoMenu
                     _commsSab = CheatToggles.commsSab;
                 }
 
-                CheatToggles.commsSab = _commsSab = commsSys.IsActive;
+                if (commsSys != null)
+                    CheatToggles.commsSab = _commsSab = commsSys.IsActive;
             }
         }
 
@@ -131,7 +137,7 @@ namespace NekoMenu
         {
             if (mapId != 5)
             {
-                var elecSys = shipStatus.Systems[SystemTypes.Electrical].Cast<SwitchSystem>();
+                var elecSys = shipStatus.Systems[SystemTypes.Electrical].TryCast<SwitchSystem>();
 
                 HandleUnfixLights(shipStatus);
 
@@ -143,7 +149,7 @@ namespace NekoMenu
                         {
                             var switchMask = 1 << (i & 0x1F);
 
-                            if ((elecSys.ActualSwitches & switchMask) != (elecSys.ExpectedSwitches & switchMask))
+                            if (elecSys != null && (elecSys.ActualSwitches & switchMask) != (elecSys.ExpectedSwitches & switchMask))
                             {
                                 shipStatus.RpcUpdateSystem(SystemTypes.Electrical, (byte)i);
                             }
@@ -168,7 +174,8 @@ namespace NekoMenu
                     _elecSab = CheatToggles.elecSab;
                 }
 
-                CheatToggles.elecSab = _elecSab = elecSys.IsActive && !_unfixableLights;
+                if (elecSys != null)
+                    CheatToggles.elecSab = _elecSab = elecSys.IsActive && !_unfixableLights;
                 return;
             }
 
@@ -230,18 +237,36 @@ namespace NekoMenu
         {
             if (CheatToggles.closeAllDoors)
             {
-                shipStatus.RpcCloseDoorsOfType(ShipStatus.Instance.Systems[SystemTypes.Doors].Cast<DoorSystemsType>());
+                foreach (var door in shipStatus.AllDoors)
+                {
+                    if (door != null)
+                    {
+                        door.SetDoorOpen(false);
+                    }
+                }
                 CheatToggles.closeAllDoors = false;
             }
             if (CheatToggles.openAllDoors)
             {
-                // Open all doors logic here
+                foreach (var door in shipStatus.AllDoors)
+                {
+                    if (door != null)
+                    {
+                        door.SetDoorOpen(true);
+                    }
+                }
                 CheatToggles.openAllDoors = false;
             }
 
             if (CheatToggles.spamCloseAllDoors)
             {
-                shipStatus.RpcCloseDoorsOfType(ShipStatus.Instance.Systems[SystemTypes.Doors].Cast<DoorSystemsType>());
+                foreach (var door in shipStatus.AllDoors)
+                {
+                    if (door != null)
+                    {
+                        door.SetDoorOpen(false);
+                    }
+                }
             }
         }
 
