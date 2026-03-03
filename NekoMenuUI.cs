@@ -21,51 +21,59 @@ namespace NekoMenu
         }
         
         private void Update()
-        {
-            if (Input.GetKeyDown(KeyCode.RightControl))
-                menuVisible = !menuVisible;
-                
-            if (PlayerControl.LocalPlayer != null)
-            {
-                KillCheats.NoKillCdCheat(PlayerControl.LocalPlayer);
-                RoleCheats.UseVentCheat(HudManager.Instance);
-                RoleCheats.WalkInVentCheat();
-                MovementCheats.NoClipCheat();
-                MovementCheats.TeleportCursorCheat();
-                MovementCheats.SpeedHackCheat();
-                
-                if (PlayerControl.LocalPlayer.Data.Role is EngineerRole engineer)
-                    RoleCheats.HandleEngineerCheats(engineer);
-                if (PlayerControl.LocalPlayer.Data.Role is ShapeshifterRole shapeshifter)
-                    RoleCheats.HandleShapeshifterCheats(shapeshifter);
-                if (PlayerControl.LocalPlayer.Data.Role is ScientistRole scientist)
-                    RoleCheats.HandleScientistCheats(scientist);
-                if (PlayerControl.LocalPlayer.Data.Role is TrackerRole tracker)
-                    RoleCheats.HandleTrackerCheats(tracker);
-            }
-            
-            MeetingCheats.CloseMeetingCheat();
-            MeetingCheats.SkipMeetingCheat();
-            MeetingCheats.CallMeetingCheat();
-            MeetingCheats.ForceStartGameCheat();
-            MeetingCheats.CompleteMyTasksCheat();
-            MeetingCheats.OpenSabotageMapCheat();
-            RoleCheats.KickVentsCheat();
-            RoleCheats.ProtectCheat();
-            RoleCheats.ChangeRoleCheat();
-            KillCheats.KillAllCheat();
-            KillCheats.KillAllCrewCheat();
-            KillCheats.KillAllImpsCheat();
-            KillCheats.KillAllLobbyCheat();
-            KillCheats.KillSelectedCheat();
-            KillCheats.KillSelfCheat();
-            KillCheats.ReviveSelectedCheat();
-            MovementCheats.ReviveCheat();
-            MovementCheats.SabotageCheat();
-            ChaosCheats.TeleportAllToMeCheat();
-            ChaosCheats.FreezeAllCheat();
-            ChaosCheats.NoChatCooldownCheat();
-        }
+{
+    if (Input.GetKeyDown(KeyCode.RightControl))
+        menuVisible = !menuVisible;
+        
+    if (PlayerControl.LocalPlayer != null)
+    {
+        KillCheats.NoKillCdCheat(PlayerControl.LocalPlayer);
+        RoleCheats.UseVentCheat(HudManager.Instance);
+        RoleCheats.WalkInVentCheat();
+        MovementCheats.NoClipCheat();
+        MovementCheats.TeleportCursorCheat();
+        MovementCheats.SpeedHackCheat();
+        
+        if (PlayerControl.LocalPlayer.Data.Role is EngineerRole engineer)
+            RoleCheats.HandleEngineerCheats(engineer);
+        if (PlayerControl.LocalPlayer.Data.Role is ShapeshifterRole shapeshifter)
+            RoleCheats.HandleShapeshifterCheats(shapeshifter);
+        if (PlayerControl.LocalPlayer.Data.Role is ScientistRole scientist)
+            RoleCheats.HandleScientistCheats(scientist);
+        if (PlayerControl.LocalPlayer.Data.Role is TrackerRole tracker)
+            RoleCheats.HandleTrackerCheats(tracker);
+    }
+    
+    // Add this block for sabotages
+    if (ShipStatus.Instance != null)
+    {
+        SabotageCheats.Process(ShipStatus.Instance);
+        if (ShipStatus.Instance is FungleShipStatus fungle)
+            SabotageCheats.ProcessFungle(fungle);
+    }
+    
+    MeetingCheats.CloseMeetingCheat();
+    MeetingCheats.SkipMeetingCheat();
+    MeetingCheats.CallMeetingCheat();
+    MeetingCheats.ForceStartGameCheat();
+    MeetingCheats.CompleteMyTasksCheat();
+    MeetingCheats.OpenSabotageMapCheat();
+    RoleCheats.KickVentsCheat();
+    RoleCheats.ProtectCheat();
+    RoleCheats.ChangeRoleCheat();
+    KillCheats.KillAllCheat();
+    KillCheats.KillAllCrewCheat();
+    KillCheats.KillAllImpsCheat();
+    KillCheats.KillAllLobbyCheat();
+    KillCheats.KillSelectedCheat();
+    KillCheats.KillSelfCheat();
+    KillCheats.ReviveSelectedCheat();
+    MovementCheats.ReviveCheat();
+    MovementCheats.SabotageCheat(); // 
+    ChaosCheats.TeleportAllToMeCheat();
+    ChaosCheats.FreezeAllCheat();
+    ChaosCheats.NoChatCooldownCheat();
+}
         
         private void OnGUI()
         {
