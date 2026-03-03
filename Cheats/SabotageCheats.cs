@@ -18,7 +18,7 @@ namespace NekoMenu
         {
             switch (mapId)
             {
-                case 2: // Polus uses SystemTypes.Laboratory
+                case 2:
                 {
                     var labSys = shipStatus.Systems[SystemTypes.Laboratory].Cast<ReactorSystemType>();
 
@@ -31,7 +31,7 @@ namespace NekoMenu
                     CheatToggles.reactorSab = _reactorSab = labSys.IsActive;
                     break;
                 }
-                case 4: // Airship uses HeliSabotageSystem
+                case 4:
                 {
                     var heliSys = shipStatus.Systems[SystemTypes.HeliSabotage].Cast<HeliSabotageSystem>();
 
@@ -53,7 +53,7 @@ namespace NekoMenu
                     CheatToggles.reactorSab = _reactorSab = heliSys.IsActive;
                     break;
                 }
-                default: // Other maps behave normally
+                default:
                 {
                     var reactorSys = shipStatus.Systems[SystemTypes.Reactor].Cast<ReactorSystemType>();
 
@@ -71,7 +71,7 @@ namespace NekoMenu
 
         public static void HandleOxygen(ShipStatus shipStatus, byte mapId)
         {
-            if (mapId != 4 && mapId != 2 && mapId != 5) // Maps without Oxygen: Airship, MiraHQ, Fungle
+            if (mapId != 4 && mapId != 2 && mapId != 5)
             {
                 var oxygenSys = shipStatus.Systems[SystemTypes.LifeSupp].Cast<LifeSuppSystemType>();
 
@@ -92,7 +92,7 @@ namespace NekoMenu
 
         public static void HandleComms(ShipStatus shipStatus, byte mapId)
         {
-            if (mapId is 1 or 5) // Fungle & Skeld use HqHudSystemType
+            if (mapId is 1 or 5)
             {
                 var hqCommsSys = shipStatus.Systems[SystemTypes.Comms].Cast<HqHudSystemType>();
 
@@ -113,7 +113,7 @@ namespace NekoMenu
 
                 CheatToggles.commsSab = _commsSab = hqCommsSys.IsActive;
             }
-            else // Other maps behave normally
+            else
             {
                 var commsSys = shipStatus.Systems[SystemTypes.Comms].Cast<HudOverrideSystemType>();
 
@@ -129,7 +129,7 @@ namespace NekoMenu
 
         public static void HandleElectrical(ShipStatus shipStatus, byte mapId)
         {
-            if (mapId != 5) // Fungle has no electrical
+            if (mapId != 5)
             {
                 var elecSys = shipStatus.Systems[SystemTypes.Electrical].Cast<SwitchSystem>();
 
@@ -137,7 +137,7 @@ namespace NekoMenu
 
                 if (CheatToggles.elecSab != _elecSab)
                 {
-                    if (CheatToggles.elecSab) // Repair
+                    if (CheatToggles.elecSab)
                     {
                         for (var i = 0; i < 5; i++)
                         {
@@ -149,7 +149,7 @@ namespace NekoMenu
                             }
                         }
                     }
-                    else // Sabotage
+                    else
                     {
                         CheatToggles.unfixableLights = false;
 
@@ -195,7 +195,7 @@ namespace NekoMenu
         {
             if (!CheatToggles.mushSab) return;
 
-            if (mapId == 5) // Fungle only
+            if (mapId == 5)
             {
                 shipStatus.RpcUpdateSystem(SystemTypes.MushroomMixupSabotage, 1);
             }
