@@ -160,8 +160,19 @@ namespace NekoMenu
             
             if (target != null && target.Data.IsDead)
             {
+                // Send RPC to tell everyone they're alive
+                MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(
+                    target.NetId,
+                    (byte)RpcCalls.Revive,
+                    SendOption.Reliable,
+                    -1
+                );
+                AmongUsClient.Instance.FinishRpcImmediately(writer);
+                
+                // Force revive
                 target.Revive();
                 target.Data.IsDead = false;
+                
                 Utils.ShowMessage($"Revived {target.Data.PlayerName}");
             }
             
