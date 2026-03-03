@@ -276,25 +276,22 @@ namespace NekoMenu
             }
 
             GUILayout.Space(10);
-            GUILayout.Label("SABOTAGE", GUI.skin.box);
+GUILayout.Label("SABOTAGE", GUI.skin.box);
 
-            GUILayout.BeginHorizontal();
-            if (GUILayout.Button("Lights", GUILayout.Height(30)))
-                CheatToggles.sabotageLights = true;
-            if (GUILayout.Button("Comms", GUILayout.Height(30)))
-                CheatToggles.sabotageComms = true;
-            GUILayout.EndHorizontal();
-
-            GUILayout.BeginHorizontal();
-            if (GUILayout.Button("O2", GUILayout.Height(30)))
-                CheatToggles.sabotageO2 = true;
-            if (GUILayout.Button("Reactor", GUILayout.Height(30)))
-                CheatToggles.sabotageReactor = true;
-            GUILayout.EndHorizontal();
-
-            if (GUILayout.Button("Heli (Airship)", GUILayout.Height(30)))
-                CheatToggles.sabotageHeli = true;
-        }
+if (GUILayout.Button("Reactor", GUILayout.Height(30)))
+    CheatToggles.reactorSab = true;
+if (GUILayout.Button("Oxygen", GUILayout.Height(30)))
+    CheatToggles.oxygenSab = true;
+if (GUILayout.Button("Comms", GUILayout.Height(30)))
+    CheatToggles.commsSab = true;
+if (GUILayout.Button("Lights", GUILayout.Height(30)))
+    CheatToggles.elecSab = true;
+if (GUILayout.Button("Unfixable Lights", GUILayout.Height(30)))
+    CheatToggles.unfixableLights = true;
+if (GUILayout.Button("Close All Doors", GUILayout.Height(30)))
+    CheatToggles.closeAllDoors = true;
+if (GUILayout.Button("Open All Doors", GUILayout.Height(30)))
+    CheatToggles.openAllDoors = true;
         
         private void DrawChaosTab()
         {
