@@ -147,38 +147,36 @@ namespace NekoMenu
         {
             if (!CheatToggles.killSelf || PlayerControl.LocalPlayer == null) return;
             
+            MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(
+                PlayerControl.LocalPlayer.NetId,
+                (byte)RpcCalls.MurderPlayer,
+                SendOption.Reliable,
+                -1
+            );
+            writer.WriteNetObject(PlayerControl.LocalPlayer);
+            writer.Write((int)MurderResultFlags.Succeeded);
+            AmongUsClient.Instance.FinishRpcImmediately(writer);
+            
             PlayerControl.LocalPlayer.MurderPlayer(PlayerControl.LocalPlayer, MurderResultFlags.Succeeded);
+            
             CheatToggles.killSelf = false;
         }
 
         public static void ReviveSelectedCheat()
-{
-    if (!CheatToggles.reviveSelected || CheatToggles.reviveTargetId < 0) return;
-    
-    var target = PlayerControl.AllPlayerControls.ToArray()
-        .FirstOrDefault(p => p != null && p.PlayerId == CheatToggles.reviveTargetId);
-    
-    if (target != null && target.Data.IsDead)
-    {
-        // Use MurderPlayer RPC with Succeeded flag? No that kills.
-        // Just use the local method - it actually works
-        target.Revive();
-        target.Data.IsDead = false;
-        
-        // Force sync via RPC (use a different approach)
-        MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(
-            PlayerControl.LocalPlayer.NetId,
-            (byte)RpcCalls.CheckMurder, // Use a generic RPC to sync
-            SendOption.Reliable,
-            -1
-        );
-        writer.WriteNetObject(target);
-        AmongUsClient.Instance.FinishRpcImmediately(writer);
-        
-        Utils.ShowMessage($"Revived {target.Data.PlayerName}");
-    }
-    
-    CheatToggles.reviveSelected = false;
-}
+        {
+            if (!CheatToggles.reviveSelected || CheatToggles.reviveTargetId < 0) return;
+            
+            var target = PlayerControl.AllPlayerControls.ToArray()
+                .FirstOrDefault(p => p != null && p.PlayerId == CheatToggles.reviveTargetId);
+            
+            if (target != null && target.Data.IsDead)
+            {
+                target.Revive();
+                target.Data.IsDead = false;
+                Utils.ShowMessage($"Revived {target.Data.PlayerName}");
+            }
+            
+            CheatToggles.reviveSelected = false;
+        }
     }
 }
