@@ -10,7 +10,7 @@ namespace NekoMenu
         // Returns a list of all rooms that have doors
         public static List<SystemTypes> GetRoomsWithDoors()
         {
-            if (!Utils.isShip || ShipStatus.Instance.AllDoors.Count <= 0) return new List<SystemTypes>();
+            if (ShipStatus.Instance == null || ShipStatus.Instance.AllDoors.Count <= 0) return new List<SystemTypes>();
 
             return ShipStatus.Instance.AllDoors.Select(d => d.Room).Distinct().ToList();
         }
@@ -18,7 +18,7 @@ namespace NekoMenu
         // Returns a list of all doors in a specified room
         public static List<OpenableDoor> GetDoorsInRoom(SystemTypes room)
         {
-            if (!Utils.isShip || ShipStatus.Instance.AllDoors.Count <= 0) return new List<OpenableDoor>();
+            if (ShipStatus.Instance == null || ShipStatus.Instance.AllDoors.Count <= 0) return new List<OpenableDoor>();
 
             return ShipStatus.Instance.AllDoors.Where(d => d.Room == room).ToList();
         }
