@@ -39,12 +39,12 @@ namespace NekoMenu
                     {
                         if (CheatToggles.reactorSab)
                         {
-                            shipStatus.RpcUpdateSystem(SystemTypes.HeliSabotage, 16 | 0);
-                            shipStatus.RpcUpdateSystem(SystemTypes.HeliSabotage, 16 | 1);
+                            shipStatus.RpcUpdateSystem(SystemTypes.HeliSabotage, (byte)(16 | 0));
+                            shipStatus.RpcUpdateSystem(SystemTypes.HeliSabotage, (byte)(16 | 1));
                         }
                         else
                         {
-                            shipStatus.RpcUpdateSystem(SystemTypes.HeliSabotage, 128);
+                            shipStatus.RpcUpdateSystem(SystemTypes.HeliSabotage, (byte)128);
                         }
 
                         _reactorSab = CheatToggles.reactorSab;
@@ -100,12 +100,12 @@ namespace NekoMenu
                 {
                     if (CheatToggles.commsSab)
                     {
-                        shipStatus.RpcUpdateSystem(SystemTypes.Comms, 16 | 0);
-                        shipStatus.RpcUpdateSystem(SystemTypes.Comms, 16 | 1);
+                        shipStatus.RpcUpdateSystem(SystemTypes.Comms, (byte)(16 | 0));
+                        shipStatus.RpcUpdateSystem(SystemTypes.Comms, (byte)(16 | 1));
                     }
                     else
                     {
-                        shipStatus.RpcUpdateSystem(SystemTypes.Comms, 128);
+                        shipStatus.RpcUpdateSystem(SystemTypes.Comms, (byte)128);
                     }
 
                     _commsSab = CheatToggles.commsSab;
@@ -187,7 +187,7 @@ namespace NekoMenu
                 CheatToggles.elecSab = false;
             }
 
-            shipStatus.RpcUpdateSystem(SystemTypes.Electrical, 69);
+            shipStatus.RpcUpdateSystem(SystemTypes.Electrical, (byte)69);
             _unfixableLights = CheatToggles.unfixableLights;
         }
 
@@ -197,7 +197,7 @@ namespace NekoMenu
 
             if (mapId == 5)
             {
-                shipStatus.RpcUpdateSystem(SystemTypes.MushroomMixupSabotage, 1);
+                shipStatus.RpcUpdateSystem(SystemTypes.MushroomMixupSabotage, (byte)1);
             }
             else
             {
@@ -230,22 +230,34 @@ namespace NekoMenu
         {
             if (CheatToggles.closeAllDoors)
             {
-                DoorsHandler.CloseAllDoors();
+                foreach (var door in shipStatus.AllDoors)
+                {
+                    door.SetDoorOpen(false);
+                }
                 CheatToggles.closeAllDoors = false;
             }
             if (CheatToggles.openAllDoors)
             {
-                DoorsHandler.OpenAllDoors();
+                foreach (var door in shipStatus.AllDoors)
+                {
+                    door.SetDoorOpen(true);
+                }
                 CheatToggles.openAllDoors = false;
             }
 
             if (CheatToggles.spamCloseAllDoors)
             {
-                DoorsHandler.CloseAllDoors();
+                foreach (var door in shipStatus.AllDoors)
+                {
+                    door.SetDoorOpen(false);
+                }
             }
             if (CheatToggles.spamOpenAllDoors)
             {
-                DoorsHandler.OpenAllDoors();
+                foreach (var door in shipStatus.AllDoors)
+                {
+                    door.SetDoorOpen(true);
+                }
             }
         }
 
