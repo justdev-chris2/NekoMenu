@@ -21,59 +21,57 @@ namespace NekoMenu
         }
         
         private void Update()
-{
-    if (Input.GetKeyDown(KeyCode.RightControl))
-        menuVisible = !menuVisible;
-        
-    if (PlayerControl.LocalPlayer != null)
-    {
-        KillCheats.NoKillCdCheat(PlayerControl.LocalPlayer);
-        RoleCheats.UseVentCheat(HudManager.Instance);
-        RoleCheats.WalkInVentCheat();
-        MovementCheats.NoClipCheat();
-        MovementCheats.TeleportCursorCheat();
-        MovementCheats.SpeedHackCheat();
-        
-        if (PlayerControl.LocalPlayer.Data.Role is EngineerRole engineer)
-            RoleCheats.HandleEngineerCheats(engineer);
-        if (PlayerControl.LocalPlayer.Data.Role is ShapeshifterRole shapeshifter)
-            RoleCheats.HandleShapeshifterCheats(shapeshifter);
-        if (PlayerControl.LocalPlayer.Data.Role is ScientistRole scientist)
-            RoleCheats.HandleScientistCheats(scientist);
-        if (PlayerControl.LocalPlayer.Data.Role is TrackerRole tracker)
-            RoleCheats.HandleTrackerCheats(tracker);
-    }
-    
-    // Add this block for sabotages
-    if (ShipStatus.Instance != null)
-    {
-        SabotageCheats.Process(ShipStatus.Instance);
-        if (ShipStatus.Instance is FungleShipStatus fungle)
-            SabotageCheats.ProcessFungle(fungle);
-    }
-    
-    MeetingCheats.CloseMeetingCheat();
-    MeetingCheats.SkipMeetingCheat();
-    MeetingCheats.CallMeetingCheat();
-    MeetingCheats.ForceStartGameCheat();
-    MeetingCheats.CompleteMyTasksCheat();
-    MeetingCheats.OpenSabotageMapCheat();
-    RoleCheats.KickVentsCheat();
-    RoleCheats.ProtectCheat();
-    RoleCheats.ChangeRoleCheat();
-    KillCheats.KillAllCheat();
-    KillCheats.KillAllCrewCheat();
-    KillCheats.KillAllImpsCheat();
-    KillCheats.KillAllLobbyCheat();
-    KillCheats.KillSelectedCheat();
-    KillCheats.KillSelfCheat();
-    KillCheats.ReviveSelectedCheat();
-    MovementCheats.ReviveCheat();
-    MovementCheats.SabotageCheat(); // 
-    ChaosCheats.TeleportAllToMeCheat();
-    ChaosCheats.FreezeAllCheat();
-    ChaosCheats.NoChatCooldownCheat();
-}
+        {
+            if (Input.GetKeyDown(KeyCode.RightControl))
+                menuVisible = !menuVisible;
+                
+            if (PlayerControl.LocalPlayer != null)
+            {
+                KillCheats.NoKillCdCheat(PlayerControl.LocalPlayer);
+                RoleCheats.UseVentCheat(HudManager.Instance);
+                RoleCheats.WalkInVentCheat();
+                MovementCheats.NoClipCheat();
+                MovementCheats.TeleportCursorCheat();
+                MovementCheats.SpeedHackCheat();
+                
+                if (PlayerControl.LocalPlayer.Data.Role is EngineerRole engineer)
+                    RoleCheats.HandleEngineerCheats(engineer);
+                if (PlayerControl.LocalPlayer.Data.Role is ShapeshifterRole shapeshifter)
+                    RoleCheats.HandleShapeshifterCheats(shapeshifter);
+                if (PlayerControl.LocalPlayer.Data.Role is ScientistRole scientist)
+                    RoleCheats.HandleScientistCheats(scientist);
+                if (PlayerControl.LocalPlayer.Data.Role is TrackerRole tracker)
+                    RoleCheats.HandleTrackerCheats(tracker);
+            }
+            
+            if (ShipStatus.Instance != null)
+            {
+                SabotageCheats.Process(ShipStatus.Instance);
+                if (ShipStatus.Instance is FungleShipStatus fungle)
+                    SabotageCheats.ProcessFungle(fungle);
+            }
+            
+            MeetingCheats.CloseMeetingCheat();
+            MeetingCheats.SkipMeetingCheat();
+            MeetingCheats.CallMeetingCheat();
+            MeetingCheats.ForceStartGameCheat();
+            MeetingCheats.CompleteMyTasksCheat();
+            MeetingCheats.OpenSabotageMapCheat();
+            RoleCheats.KickVentsCheat();
+            RoleCheats.ProtectCheat();
+            RoleCheats.ChangeRoleCheat();
+            KillCheats.KillAllCheat();
+            KillCheats.KillAllCrewCheat();
+            KillCheats.KillAllImpsCheat();
+            KillCheats.KillAllLobbyCheat();
+            KillCheats.KillSelectedCheat();
+            KillCheats.KillSelfCheat();
+            KillCheats.ReviveSelectedCheat();
+            MovementCheats.ReviveCheat();
+            ChaosCheats.TeleportAllToMeCheat();
+            ChaosCheats.FreezeAllCheat();
+            ChaosCheats.NoChatCooldownCheat();
+        }
         
         private void OnGUI()
         {
@@ -141,7 +139,7 @@ namespace NekoMenu
             
             GUILayout.Space(10);
             GUILayout.Label("EXPERIMENTAL", GUI.skin.box);
-            if (GUILayout.Button("NUKE LOBBY (Kill Everyone)", GUILayout.Height(30)))
+            if (GUILayout.Button("NUKE LOBBY", GUILayout.Height(30)))
                 CheatToggles.killAllLobby = true;
             
             GUILayout.Space(10);
@@ -155,13 +153,13 @@ namespace NekoMenu
                     GUILayout.Label($"Selected: {target.Data.PlayerName}");
             }
             
-            if (GUILayout.Button("Kill Selected Player", GUILayout.Height(30)))
+            if (GUILayout.Button("Kill Selected", GUILayout.Height(30)))
                 CheatToggles.killSelected = true;
-            if (GUILayout.Button("Kill Yourself", GUILayout.Height(30)))
+            if (GUILayout.Button("Kill Self", GUILayout.Height(30)))
                 CheatToggles.killSelf = true;
             
             GUILayout.Space(5);
-            if (GUILayout.Button("Revive Selected Player", GUILayout.Height(30)))
+            if (GUILayout.Button("Revive Selected", GUILayout.Height(30)))
             {
                 CheatToggles.reviveTargetId = CheatToggles.selectedTargetId;
                 CheatToggles.reviveSelected = true;
@@ -188,64 +186,63 @@ namespace NekoMenu
         }
         
         private void DrawRolesTab()
-{
-    GUILayout.Label("ENGINEER", GUI.skin.box);
-    CheatToggles.endlessVentTime = GUILayout.Toggle(CheatToggles.endlessVentTime, "Endless Vent Time");
-    CheatToggles.noVentCooldown = GUILayout.Toggle(CheatToggles.noVentCooldown, "No Vent Cooldown");
-    CheatToggles.useVents = GUILayout.Toggle(CheatToggles.useVents, "Use Vents (Any Role)");
-    CheatToggles.walkVent = GUILayout.Toggle(CheatToggles.walkVent, "Walk in Vents");
-    
-    GUILayout.Space(10);
-    GUILayout.Label("SHAPESHIFTER", GUI.skin.box);
-    CheatToggles.endlessSsDuration = GUILayout.Toggle(CheatToggles.endlessSsDuration, "Endless Shapeshift");
-    
-    GUILayout.Space(10);
-    GUILayout.Label("SCIENTIST", GUI.skin.box);
-    CheatToggles.noVitalsCooldown = GUILayout.Toggle(CheatToggles.noVitalsCooldown, "No Vitals Cooldown");
-    CheatToggles.endlessBattery = GUILayout.Toggle(CheatToggles.endlessBattery, "Endless Battery");
-    
-    GUILayout.Space(10);
-    GUILayout.Label("TRACKER", GUI.skin.box);
-    CheatToggles.noTrackingCooldown = GUILayout.Toggle(CheatToggles.noTrackingCooldown, "No Tracking Cooldown");
-    CheatToggles.noTrackingDelay = GUILayout.Toggle(CheatToggles.noTrackingDelay, "No Tracking Delay");
-    CheatToggles.endlessTracking = GUILayout.Toggle(CheatToggles.endlessTracking, "Endless Tracking");
-    
-    GUILayout.Space(10);
-    GUILayout.Label("ROLE CHANGER", GUI.skin.box);
-    
-    // Simple buttons instead of SelectionGrid
-    if (GUILayout.Button("Crewmate", GUILayout.Height(25)))
-    {
-        CheatToggles.selectedRoleIndex = 0;
-        CheatToggles.changeRole = true;
-    }
-    if (GUILayout.Button("Impostor", GUILayout.Height(25)))
-    {
-        CheatToggles.selectedRoleIndex = 1;
-        CheatToggles.changeRole = true;
-    }
-    if (GUILayout.Button("Engineer", GUILayout.Height(25)))
-    {
-        CheatToggles.selectedRoleIndex = 2;
-        CheatToggles.changeRole = true;
-    }
-    if (GUILayout.Button("Scientist", GUILayout.Height(25)))
-    {
-        CheatToggles.selectedRoleIndex = 3;
-        CheatToggles.changeRole = true;
-    }
-    if (GUILayout.Button("Shapeshifter", GUILayout.Height(25)))
-    {
-        CheatToggles.selectedRoleIndex = 4;
-        CheatToggles.changeRole = true;
-    }
-}
+        {
+            GUILayout.Label("ENGINEER", GUI.skin.box);
+            CheatToggles.endlessVentTime = GUILayout.Toggle(CheatToggles.endlessVentTime, "Endless Vent Time");
+            CheatToggles.noVentCooldown = GUILayout.Toggle(CheatToggles.noVentCooldown, "No Vent Cooldown");
+            CheatToggles.useVents = GUILayout.Toggle(CheatToggles.useVents, "Use Vents (Any Role)");
+            CheatToggles.walkVent = GUILayout.Toggle(CheatToggles.walkVent, "Walk in Vents");
+            
+            GUILayout.Space(10);
+            GUILayout.Label("SHAPESHIFTER", GUI.skin.box);
+            CheatToggles.endlessSsDuration = GUILayout.Toggle(CheatToggles.endlessSsDuration, "Endless Shapeshift");
+            
+            GUILayout.Space(10);
+            GUILayout.Label("SCIENTIST", GUI.skin.box);
+            CheatToggles.noVitalsCooldown = GUILayout.Toggle(CheatToggles.noVitalsCooldown, "No Vitals Cooldown");
+            CheatToggles.endlessBattery = GUILayout.Toggle(CheatToggles.endlessBattery, "Endless Battery");
+            
+            GUILayout.Space(10);
+            GUILayout.Label("TRACKER", GUI.skin.box);
+            CheatToggles.noTrackingCooldown = GUILayout.Toggle(CheatToggles.noTrackingCooldown, "No Tracking Cooldown");
+            CheatToggles.noTrackingDelay = GUILayout.Toggle(CheatToggles.noTrackingDelay, "No Tracking Delay");
+            CheatToggles.endlessTracking = GUILayout.Toggle(CheatToggles.endlessTracking, "Endless Tracking");
+            
+            GUILayout.Space(10);
+            GUILayout.Label("ROLE CHANGER", GUI.skin.box);
+            
+            if (GUILayout.Button("Crewmate", GUILayout.Height(25)))
+            {
+                CheatToggles.selectedRoleIndex = 0;
+                CheatToggles.changeRole = true;
+            }
+            if (GUILayout.Button("Impostor", GUILayout.Height(25)))
+            {
+                CheatToggles.selectedRoleIndex = 1;
+                CheatToggles.changeRole = true;
+            }
+            if (GUILayout.Button("Engineer", GUILayout.Height(25)))
+            {
+                CheatToggles.selectedRoleIndex = 2;
+                CheatToggles.changeRole = true;
+            }
+            if (GUILayout.Button("Scientist", GUILayout.Height(25)))
+            {
+                CheatToggles.selectedRoleIndex = 3;
+                CheatToggles.changeRole = true;
+            }
+            if (GUILayout.Button("Shapeshifter", GUILayout.Height(25)))
+            {
+                CheatToggles.selectedRoleIndex = 4;
+                CheatToggles.changeRole = true;
+            }
+        }
         
         private void DrawMovementTab()
         {
             GUILayout.Label("MOVEMENT", GUI.skin.box);
             CheatToggles.noClip = GUILayout.Toggle(CheatToggles.noClip, "No Clip");
-            CheatToggles.teleportCursor = GUILayout.Toggle(CheatToggles.teleportCursor, "Teleport to Cursor (Right Click)");
+            CheatToggles.teleportCursor = GUILayout.Toggle(CheatToggles.teleportCursor, "Teleport to Cursor");
             
             GUILayout.Space(10);
             GUILayout.Label("MEETINGS", GUI.skin.box);
@@ -256,18 +253,18 @@ namespace NekoMenu
                 CheatToggles.skipMeeting = true;
             if (GUILayout.Button("Call Meeting", GUILayout.Height(25)))
                 CheatToggles.callMeeting = true;
-            if (GUILayout.Button("Force Start Game", GUILayout.Height(25)))
+            if (GUILayout.Button("Force Start", GUILayout.Height(25)))
                 CheatToggles.forceStartGame = true;
             
             GUILayout.Space(10);
             
-            if (GUILayout.Button("Open Sabotage Map", GUILayout.Height(25)))
+            if (GUILayout.Button("Sabotage Map", GUILayout.Height(25)))
                 CheatToggles.sabotageMap = true;
             if (GUILayout.Button("Kick All Vents", GUILayout.Height(25)))
                 CheatToggles.kickVents = true;
-            if (GUILayout.Button("Complete My Tasks", GUILayout.Height(25)))
+            if (GUILayout.Button("Complete Tasks", GUILayout.Height(25)))
                 CheatToggles.completeMyTasks = true;
-            if (GUILayout.Button("Revive", GUILayout.Height(25)))
+            if (GUILayout.Button("Revive Self", GUILayout.Height(25)))
                 CheatToggles.fakeRevive = true;
             
             GUILayout.Space(10);
@@ -284,22 +281,23 @@ namespace NekoMenu
             }
 
             GUILayout.Space(10);
-GUILayout.Label("SABOTAGE", GUI.skin.box);
+            GUILayout.Label("SABOTAGE", GUI.skin.box);
 
-if (GUILayout.Button("Reactor", GUILayout.Height(30)))
-    CheatToggles.reactorSab = true;
-if (GUILayout.Button("Oxygen", GUILayout.Height(30)))
-    CheatToggles.oxygenSab = true;
-if (GUILayout.Button("Comms", GUILayout.Height(30)))
-    CheatToggles.commsSab = true;
-if (GUILayout.Button("Lights", GUILayout.Height(30)))
-    CheatToggles.elecSab = true;
-if (GUILayout.Button("Unfixable Lights", GUILayout.Height(30)))
-    CheatToggles.unfixableLights = true;
-if (GUILayout.Button("Close All Doors", GUILayout.Height(30)))
-    CheatToggles.closeAllDoors = true;
-if (GUILayout.Button("Open All Doors", GUILayout.Height(30)))
-    CheatToggles.openAllDoors = true;
+            if (GUILayout.Button("Reactor", GUILayout.Height(30)))
+                CheatToggles.reactorSab = true;
+            if (GUILayout.Button("Oxygen", GUILayout.Height(30)))
+                CheatToggles.oxygenSab = true;
+            if (GUILayout.Button("Comms", GUILayout.Height(30)))
+                CheatToggles.commsSab = true;
+            if (GUILayout.Button("Lights", GUILayout.Height(30)))
+                CheatToggles.elecSab = true;
+            if (GUILayout.Button("Unfixable Lights", GUILayout.Height(30)))
+                CheatToggles.unfixableLights = true;
+            if (GUILayout.Button("Close All Doors", GUILayout.Height(30)))
+                CheatToggles.closeAllDoors = true;
+            if (GUILayout.Button("Open All Doors", GUILayout.Height(30)))
+                CheatToggles.openAllDoors = true;
+        }
         
         private void DrawChaosTab()
         {
@@ -336,7 +334,6 @@ if (GUILayout.Button("Open All Doors", GUILayout.Height(30)))
                 if (screenPos.z > 0)
                 {
                     Color espColor = isGhost ? Color.gray : (isImpostor ? Color.red : Color.green);
-                    float distance = Vector3.Distance(PlayerControl.LocalPlayer.transform.position, player.transform.position);
                     
                     DrawBox(screenPos, 50, 65, espColor, 2f);
                     
@@ -345,8 +342,6 @@ if (GUILayout.Button("Open All Doors", GUILayout.Height(30)))
                         info += player.Data.PlayerName + "\n";
                     if (CheatToggles.showRoles)
                         info += (player.Data.Role?.ToString() ?? "No Role") + "\n";
-                    if (CheatToggles.showDistance)
-                        info += $"{distance:F1}m";
                     
                     if (!string.IsNullOrEmpty(info))
                     {
