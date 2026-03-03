@@ -14,7 +14,7 @@ namespace NekoMenu
             if (Utils.isMeeting)
             {
                 MeetingHud.Instance.DespawnOnDestroy = false;
-                Object.Destroy(MeetingHud.Instance.gameObject);
+                UnityEngine.Object.Destroy(MeetingHud.Instance.gameObject);
 
                 DestroyableSingleton<HudManager>.Instance.StartCoroutine(DestroyableSingleton<HudManager>.Instance.CoFadeFullScreen(Color.black, Color.clear, 0.2f, false));
                 PlayerControl.LocalPlayer.SetKillTimer(GameManager.Instance.LogicOptions.GetKillCooldown());
@@ -44,6 +44,10 @@ namespace NekoMenu
         {
             if (!CheatToggles.callMeeting) return;
 
+            bool wasDead = PlayerControl.LocalPlayer.Data.IsDead;
+            if (wasDead)
+                PlayerControl.LocalPlayer.Data.IsDead = false;
+
             if (Utils.isHost)
             {
                 MeetingRoomManager.Instance.AssignSelf(PlayerControl.LocalPlayer, null);
@@ -54,6 +58,7 @@ namespace NekoMenu
             {
                 PlayerControl.LocalPlayer.CmdReportDeadBody(null);
             }
+
             CheatToggles.callMeeting = false;
         }
 
