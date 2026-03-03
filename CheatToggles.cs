@@ -6,7 +6,7 @@ namespace NekoMenu
     public static class CheatToggles
     {
         // ESP Toggles
-        public static bool espEnabled = true;
+        public static bool espEnabled = false;
         public static bool showGhosts = true;
         public static bool showImpostors = true;
         public static bool showCrewmates = true;
@@ -39,6 +39,10 @@ namespace NekoMenu
         public static bool noTrackingDelay = false;
         public static bool endlessTracking = false;
         
+        // Role changer
+        public static bool changeRole = false;
+        public static int selectedRoleIndex = 0;
+        
         // Meeting toggles
         public static bool closeMeeting = false;
         public static bool skipMeeting = false;
@@ -62,17 +66,11 @@ namespace NekoMenu
         public static bool sabotageHeli = false;
         
         // Chaos toggles
-        public static string customNotificationText = "";
-        public static bool sendCustomNotification = false;
-        public static bool fakeReport = false;
-        public static int fakeReportTargetId = -1;
         public static bool teleportAllToMe = false;
         public static bool freezeAll = false;
-        public static bool fakeMeetingFlash = false;
-        public static bool fakeDeathScreen = false;
-        public static int fakeDeathTargetId = -1;
-        public static bool fakeWinScreen = false;
-        public static int fakeWinTeam = 0;
+        
+        // Chat toggles
+        public static bool noChatCooldown = false;
         
         // Protect list
         public static List<PlayerControl> playersToProtect = new List<PlayerControl>();
