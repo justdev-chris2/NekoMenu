@@ -45,10 +45,8 @@ namespace NekoMenu
             {
                 if (player != null && player != PlayerControl.LocalPlayer)
                 {
-                    // Freeze by setting position repeatedly
                     Vector3 frozenPos = player.transform.position;
                     
-                    // Send RPC to lock their position
                     for (int i = 0; i < 5; i++)
                     {
                         player.NetTransform.RpcSnapTo(frozenPos);
