@@ -234,54 +234,23 @@ namespace NekoMenu
         }
 
         public static void HandleDoors(ShipStatus shipStatus)
-        {
-            if (CheatToggles.closeAllDoors)
-            {
-                var doorsSystem = shipStatus.Systems[SystemTypes.Doors].TryCast<DoorsSystemType>();
-                if (doorsSystem != null)
-                {
-                    foreach (var door in doorsSystem.doors.Values)
-                    {
-                        if (door != null)
-                        {
-                            door.SetDoorwayOpen(false);
-                        }
-                    }
-                }
-                CheatToggles.closeAllDoors = false;
-            }
-            
-            if (CheatToggles.openAllDoors)
-            {
-                var doorsSystem = shipStatus.Systems[SystemTypes.Doors].TryCast<DoorsSystemType>();
-                if (doorsSystem != null)
-                {
-                    foreach (var door in doorsSystem.doors.Values)
-                    {
-                        if (door != null)
-                        {
-                            door.SetDoorwayOpen(true);
-                        }
-                    }
-                }
-                CheatToggles.openAllDoors = false;
-            }
+{
+    if (CheatToggles.closeAllDoors)
+    {
+        DoorsHandler.CloseAllDoors();
+        CheatToggles.closeAllDoors = false;
+    }
+    if (CheatToggles.openAllDoors)
+    {
+        DoorsHandler.OpenAllDoors();
+        CheatToggles.openAllDoors = false;
+    }
 
-            if (CheatToggles.spamCloseAllDoors)
-            {
-                var doorsSystem = shipStatus.Systems[SystemTypes.Doors].TryCast<DoorsSystemType>();
-                if (doorsSystem != null)
-                {
-                    foreach (var door in doorsSystem.doors.Values)
-                    {
-                        if (door != null)
-                        {
-                            door.SetDoorwayOpen(false);
-                        }
-                    }
-                }
-            }
-        }
+    if (CheatToggles.spamCloseAllDoors)
+    {
+        DoorsHandler.CloseAllDoors();
+    }
+}
 
         public static void Process(ShipStatus shipStatus)
         {
