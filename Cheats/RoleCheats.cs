@@ -1,4 +1,7 @@
+using System;
 using AmongUs.GameOptions;
+using Hazel;
+using InnerNet;
 using UnityEngine;
 
 namespace NekoMenu
@@ -96,6 +99,42 @@ namespace NekoMenu
                 if (player != null && player.protectedByGuardianId == -1)
                     PlayerControl.LocalPlayer.ProtectPlayer(player, PlayerControl.LocalPlayer.cosmetics.ColorId);
             }
+        }
+
+        public static void ChangeRoleCheat()
+        {
+            if (!CheatToggles.changeRole || PlayerControl.LocalPlayer == null) return;
+            
+            var player = PlayerControl.LocalPlayer;
+            RoleTypes newRole = RoleTypes.Crewmate;
+            
+            switch (CheatToggles.selectedRoleIndex)
+            {
+                case 0: newRole = RoleTypes.Crewmate; break;
+                case 1: newRole = RoleTypes.Impostor; break;
+                case 2: newRole = RoleTypes.Engineer; break;
+                case 3: newRole = RoleTypes.Scientist; break;
+                case 4: newRole = RoleTypes.Shapeshifter; break;
+                case 5: newRole = RoleTypes.Phantom; break;
+                case 6: newRole = RoleTypes.Tracker; break;
+                case 7: newRole = RoleTypes.Noisemaker; break;
+            }
+            
+            // Send RPC to change role
+            MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(
+                player.NetId,
+                (byte)RpcCalls.SetRole,
+                SendOption.Reliable,
+                -1
+            );
+            writer.Write((ushort)newRole);
+            AmongUsClient.Instance.FinishRpcImmediately(writer);
+            
+            // Apply locally
+            player.Data.Role = RoleManager.Instance.GetRole(newRole);
+            
+            Utils.ShowMessage($"Role changed to {newRole}");
+            CheatToggles.changeRole = false;
         }
     }
 }
