@@ -57,13 +57,19 @@ namespace NekoMenu
         public static bool speedHackEnabled = false;
         public static float speedMultiplier = 2f;
         public static bool fakeRevive = false;
-        
-        // Sabotage toggles
-        public static bool sabotageLights = false;
-        public static bool sabotageComms = false;
-        public static bool sabotageO2 = false;
-        public static bool sabotageReactor = false;
-        public static bool sabotageHeli = false;
+    
+        // Sabotage toggles (updated)
+        public static bool reactorSab = false;
+        public static bool oxygenSab = false;
+        public static bool commsSab = false;
+        public static bool elecSab = false;
+        public static bool unfixableLights = false;
+        public static bool mushSab = false;
+        public static bool mushSpore = false;
+        public static bool closeAllDoors = false;
+        public static bool openAllDoors = false;
+        public static bool spamCloseAllDoors = false;
+        public static bool spamOpenAllDoors = false;
         
         // Chaos toggles
         public static bool teleportAllToMe = false;
