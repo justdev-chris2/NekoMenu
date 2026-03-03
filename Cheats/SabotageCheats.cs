@@ -237,22 +237,31 @@ namespace NekoMenu
         {
             if (CheatToggles.closeAllDoors)
             {
-                foreach (var door in shipStatus.AllDoors)
+                var doorsSystem = shipStatus.Systems[SystemTypes.Doors].TryCast<DoorsSystemType>();
+                if (doorsSystem != null)
                 {
-                    if (door != null)
+                    foreach (var door in doorsSystem.doors.Values)
                     {
-                        door.SetDoorOpen(false);
+                        if (door != null)
+                        {
+                            door.SetDoorwayOpen(false);
+                        }
                     }
                 }
                 CheatToggles.closeAllDoors = false;
             }
+            
             if (CheatToggles.openAllDoors)
             {
-                foreach (var door in shipStatus.AllDoors)
+                var doorsSystem = shipStatus.Systems[SystemTypes.Doors].TryCast<DoorsSystemType>();
+                if (doorsSystem != null)
                 {
-                    if (door != null)
+                    foreach (var door in doorsSystem.doors.Values)
                     {
-                        door.SetDoorOpen(true);
+                        if (door != null)
+                        {
+                            door.SetDoorwayOpen(true);
+                        }
                     }
                 }
                 CheatToggles.openAllDoors = false;
@@ -260,11 +269,15 @@ namespace NekoMenu
 
             if (CheatToggles.spamCloseAllDoors)
             {
-                foreach (var door in shipStatus.AllDoors)
+                var doorsSystem = shipStatus.Systems[SystemTypes.Doors].TryCast<DoorsSystemType>();
+                if (doorsSystem != null)
                 {
-                    if (door != null)
+                    foreach (var door in doorsSystem.doors.Values)
                     {
-                        door.SetDoorOpen(false);
+                        if (door != null)
+                        {
+                            door.SetDoorwayOpen(false);
+                        }
                     }
                 }
             }
