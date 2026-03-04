@@ -40,7 +40,6 @@ namespace NekoMenu
                     {
                         if (CheatToggles.reactorSab)
                         {
-                            // Fixed with byte casts
                             shipStatus.RpcUpdateSystem(SystemTypes.HeliSabotage, (byte)(16 | 0));
                             shipStatus.RpcUpdateSystem(SystemTypes.HeliSabotage, (byte)(16 | 1));
                         }
@@ -103,7 +102,6 @@ namespace NekoMenu
                 {
                     if (CheatToggles.commsSab)
                     {
-                        // Fixed with byte casts
                         shipStatus.RpcUpdateSystem(SystemTypes.Comms, (byte)(16 | 0));
                         shipStatus.RpcUpdateSystem(SystemTypes.Comms, (byte)(16 | 1));
                     }
@@ -189,43 +187,6 @@ namespace NekoMenu
             _unfixableLights = CheatToggles.unfixableLights;
         }
 
-        public static void HandleMushMix(ShipStatus shipStatus, byte mapId)
-{
-    if (!CheatToggles.mushSab) return;
-
-    if (mapId == 5)
-    {
-        // Line 254-257 - FIXED with byte cast
-        shipStatus.RpcUpdateSystem(SystemTypes.MushroomMixupSabotage, (byte)1);
-    }
-    else
-    {
-        HudManager.Instance.Notifier.AddDisconnectMessage("Mushrooms not present on this map");
-    }
-
-    CheatToggles.mushSab = false;
-}
-
-public static void HandleSpores(FungleShipStatus shipStatus, byte mapId)
-{
-    if (!CheatToggles.mushSpore) return;
-
-    if (mapId == 5)
-    {
-        foreach (var mushroom in shipStatus.sporeMushrooms.Values)
-        {
-            // Fixed - use RpcSetSporeTrigger instead
-            PlayerControl.LocalPlayer.NetTransform.RpcSnapTo(mushroom.transform.position);
-        }
-    }
-    else
-    {
-        HudManager.Instance.Notifier.AddDisconnectMessage("Mushrooms not present on this map");
-    }
-
-    CheatToggles.mushSpore = false;
-}
-
         public static void HandleDoors(ShipStatus shipStatus)
         {
             if (CheatToggles.closeAllDoors)
@@ -243,10 +204,6 @@ public static void HandleSpores(FungleShipStatus shipStatus, byte mapId)
             {
                 DoorsHandler.CloseAllDoors();
             }
-            if (CheatToggles.spamOpenAllDoors)
-            {
-                DoorsHandler.OpenAllDoors();
-            }
         }
 
         public static void Process(ShipStatus shipStatus)
@@ -258,14 +215,6 @@ public static void HandleSpores(FungleShipStatus shipStatus, byte mapId)
             HandleComms(shipStatus, currentMapID);
             HandleElectrical(shipStatus, currentMapID);
             HandleDoors(shipStatus);
-        }
-
-        public static void ProcessFungle(FungleShipStatus shipStatus)
-        {
-            var currentMapID = Utils.GetCurrentMapID();
-
-            HandleMushMix(shipStatus, currentMapID);
-            HandleSpores(shipStatus, currentMapID);
         }
     }
 }
