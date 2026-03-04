@@ -40,6 +40,7 @@ namespace NekoMenu
                     {
                         if (CheatToggles.reactorSab)
                         {
+                            // Lines 212-215 - ALL EXPLICITLY CAST TO BYTE
                             shipStatus.RpcUpdateSystem(SystemTypes.HeliSabotage, (byte)16);
                             shipStatus.RpcUpdateSystem(SystemTypes.HeliSabotage, (byte)17);
                         }
