@@ -47,8 +47,6 @@ namespace NekoMenu
             if (ShipStatus.Instance != null)
             {
                 SabotageCheats.Process(ShipStatus.Instance);
-                if (ShipStatus.Instance is FungleShipStatus fungle)
-                    SabotageCheats.ProcessFungle(fungle);
             }
             
             MeetingCheats.CloseMeetingCheat();
