@@ -20,13 +20,11 @@ namespace NekoMenu
             {
                 case 2:
                 {
-                    // Polus uses SystemTypes.Laboratory instead of SystemTypes.Reactor
-
                     var labSys = shipStatus.Systems[SystemTypes.Laboratory].Cast<ReactorSystemType>();
 
                     if (CheatToggles.reactorSab != _reactorSab)
                     {
-                        shipStatus.RpcUpdateSystem(SystemTypes.Laboratory, _reactorSab ? (byte)16 : (byte)128);
+                        shipStatus.RpcUpdateSystem(SystemTypes.Laboratory, CheatToggles.reactorSab ? (byte)16 : (byte)128);
                         _reactorSab = CheatToggles.reactorSab;
                     }
 
@@ -35,20 +33,18 @@ namespace NekoMenu
                 }
                 case 4:
                 {
-                    // Airship uses HeliSabotageSystem to sabotage reactor
-
                     var heliSys = shipStatus.Systems[SystemTypes.HeliSabotage].Cast<HeliSabotageSystem>();
 
                     if (CheatToggles.reactorSab != _reactorSab)
                     {
-                        if (_reactorSab)
+                        if (CheatToggles.reactorSab)
                         {
-                            shipStatus.RpcUpdateSystem(SystemTypes.HeliSabotage, 16 | 0); // Repair
-                            shipStatus.RpcUpdateSystem(SystemTypes.HeliSabotage, 16 | 1);
+                            shipStatus.RpcUpdateSystem(SystemTypes.HeliSabotage, (byte)(16 | 0));
+                            shipStatus.RpcUpdateSystem(SystemTypes.HeliSabotage, (byte)(16 | 1));
                         }
                         else
                         {
-                            shipStatus.RpcUpdateSystem(SystemTypes.HeliSabotage, 128); // Sabotage
+                            shipStatus.RpcUpdateSystem(SystemTypes.HeliSabotage, (byte)128);
                         }
 
                         _reactorSab = CheatToggles.reactorSab;
@@ -59,13 +55,11 @@ namespace NekoMenu
                 }
                 default:
                 {
-                    // Other maps behave normally
-
                     var reactorSys = shipStatus.Systems[SystemTypes.Reactor].Cast<ReactorSystemType>();
 
                     if (CheatToggles.reactorSab != _reactorSab)
                     {
-                        shipStatus.RpcUpdateSystem(SystemTypes.Reactor, _reactorSab ? (byte)16 : (byte)128);
+                        shipStatus.RpcUpdateSystem(SystemTypes.Reactor, CheatToggles.reactorSab ? (byte)16 : (byte)128);
                         _reactorSab = CheatToggles.reactorSab;
                     }
 
@@ -77,23 +71,20 @@ namespace NekoMenu
 
         public static void HandleOxygen(ShipStatus shipStatus, byte mapId)
         {
-            if (mapId != 4 && mapId != 2 && mapId != 5) { // Maps without Oxygen system: Airship, MiraHQ, Fungle
-
+            if (mapId != 4 && mapId != 2 && mapId != 5)
+            {
                 var oxygenSys = shipStatus.Systems[SystemTypes.LifeSupp].Cast<LifeSuppSystemType>();
 
                 if (CheatToggles.oxygenSab != _oxygenSab)
                 {
-                    shipStatus.RpcUpdateSystem(SystemTypes.LifeSupp, _oxygenSab ? (byte)16 : (byte)128);
+                    shipStatus.RpcUpdateSystem(SystemTypes.LifeSupp, CheatToggles.oxygenSab ? (byte)16 : (byte)128);
                     _oxygenSab = CheatToggles.oxygenSab;
                 }
 
                 CheatToggles.oxygenSab = _oxygenSab = oxygenSys.IsActive;
-
                 return;
-
             }
 
-            // Notify the player if they try to activate the cheat in a map without an oxygen system
             if (!CheatToggles.oxygenSab) return;
             HudManager.Instance.Notifier.AddDisconnectMessage("Oxygen system not present on this map");
             CheatToggles.oxygenSab = false;
@@ -101,60 +92,52 @@ namespace NekoMenu
 
         public static void HandleComms(ShipStatus shipStatus, byte mapId)
         {
-            if (mapId is 1 or 5) // Fungle & Skeld use HqHudSystemType instead of HudOverrideSystemType
+            if (mapId is 1 or 5)
             {
-
                 var hqCommsSys = shipStatus.Systems[SystemTypes.Comms].Cast<HqHudSystemType>();
 
                 if (CheatToggles.commsSab != _commsSab)
                 {
-
-                    if (_commsSab)
+                    if (CheatToggles.commsSab)
                     {
-                        shipStatus.RpcUpdateSystem(SystemTypes.Comms, 16 | 0); // Repair
-                        shipStatus.RpcUpdateSystem(SystemTypes.Comms, 16 | 1);
+                        shipStatus.RpcUpdateSystem(SystemTypes.Comms, (byte)(16 | 0));
+                        shipStatus.RpcUpdateSystem(SystemTypes.Comms, (byte)(16 | 1));
                     }
                     else
                     {
-                        shipStatus.RpcUpdateSystem(SystemTypes.Comms, 128); // Sabotage
+                        shipStatus.RpcUpdateSystem(SystemTypes.Comms, (byte)128);
                     }
 
                     _commsSab = CheatToggles.commsSab;
-
                 }
 
                 CheatToggles.commsSab = _commsSab = hqCommsSys.IsActive;
-
             }
-            else // Other maps behave normally
+            else
             {
-
                 var commsSys = shipStatus.Systems[SystemTypes.Comms].Cast<HudOverrideSystemType>();
 
                 if (CheatToggles.commsSab != _commsSab)
                 {
-                    shipStatus.RpcUpdateSystem(SystemTypes.Comms, _commsSab ? (byte)16 : (byte)128);
+                    shipStatus.RpcUpdateSystem(SystemTypes.Comms, CheatToggles.commsSab ? (byte)16 : (byte)128);
                     _commsSab = CheatToggles.commsSab;
                 }
 
                 CheatToggles.commsSab = _commsSab = commsSys.IsActive;
-
             }
         }
 
         public static void HandleElectrical(ShipStatus shipStatus, byte mapId)
         {
-            if (mapId != 5) // Fungle has no electrical system
+            if (mapId != 5)
             {
-
                 var elecSys = shipStatus.Systems[SystemTypes.Electrical].Cast<SwitchSystem>();
 
-                // Handle unfixableLights cheat first to avoid the cheats messing with each other
                 HandleUnfixLights(shipStatus);
 
                 if (CheatToggles.elecSab != _elecSab)
                 {
-                    if (_elecSab)   // Repair
+                    if (CheatToggles.elecSab)
                     {
                         for (var i = 0; i < 5; i++)
                         {
@@ -165,16 +148,16 @@ namespace NekoMenu
                                 shipStatus.RpcUpdateSystem(SystemTypes.Electrical, (byte)i);
                             }
                         }
-
                     }
-                    else // Sabotage
+                    else
                     {
-                        CheatToggles.unfixableLights = false; // Replace unfixableLights cheat if it is already active
+                        CheatToggles.unfixableLights = false;
 
                         byte b = 4;
                         for (var i = 0; i < 5; i++)
                         {
-                            if (BoolRange.Next(0.5f))
+                            // REPLACED BoolRange.Next(0.5f) with Unity Random
+                            if (UnityEngine.Random.Range(0f, 1f) > 0.5f)
                             {
                                 b |= (byte)(1 << i);
                             }
@@ -187,12 +170,9 @@ namespace NekoMenu
                 }
 
                 CheatToggles.elecSab = _elecSab = elecSys.IsActive && !_unfixableLights;
-
                 return;
-
             }
 
-            // Notify the player if they try to activate the cheat in a map without an eletrical system
             if (!CheatToggles.elecSab && !CheatToggles.unfixableLights) return;
 
             HudManager.Instance.Notifier.AddDisconnectMessage("Electrical system not present on this map");
@@ -203,17 +183,12 @@ namespace NekoMenu
         {
             if (CheatToggles.unfixableLights == _unfixableLights) return;
 
-            // Apparently most values you put for amount in RpcUpdateSystem will break lights completely
-            // They are unfixable through regular means (toggling switches)
-            // They can only be repaired by repeating RpcUpdateSystem with the same amount
-
             if (!_unfixableLights)
             {
                 CheatToggles.elecSab = false;
             }
 
-            shipStatus.RpcUpdateSystem(SystemTypes.Electrical, 69); // Repair or Sabotage
-
+            shipStatus.RpcUpdateSystem(SystemTypes.Electrical, (byte)69);
             _unfixableLights = CheatToggles.unfixableLights;
         }
 
@@ -244,7 +219,6 @@ namespace NekoMenu
         {
             var currentMapID = Utils.GetCurrentMapID();
 
-            // Handle all sabotage systems
             HandleReactor(shipStatus, currentMapID);
             HandleOxygen(shipStatus, currentMapID);
             HandleComms(shipStatus, currentMapID);
