@@ -24,8 +24,7 @@ namespace NekoMenu
             if (ShipStatus.Instance == null) return;
             foreach (var door in ShipStatus.Instance.AllDoors)
             {
-                if (door != null)
-                    door.SetDoorwayOpen(true);
+                OpenDoor(door);
             }
         }
 
@@ -34,9 +33,14 @@ namespace NekoMenu
             if (ShipStatus.Instance == null) return;
             foreach (var door in ShipStatus.Instance.AllDoors)
             {
-                if (door != null)
-                    door.SetDoorwayOpen(false);
+                try { ShipStatus.Instance.RpcCloseDoorsOfType(door.Room); } catch { }
             }
+        }
+
+        public static void OpenDoor(OpenableDoor door)
+        {
+            if (door == null) return;
+            try { ShipStatus.Instance.RpcUpdateSystem(SystemTypes.Doors, (byte)(door.Id | 64)); } catch { }
         }
     }
 }
