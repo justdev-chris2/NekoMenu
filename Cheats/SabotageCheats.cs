@@ -217,49 +217,6 @@ namespace NekoMenu
             _unfixableLights = CheatToggles.unfixableLights;
         }
 
-        public static void HandleMushMix(ShipStatus shipStatus, byte mapId)
-        {
-            if (!CheatToggles.mushSab) return;
-
-            if (mapId == 5) // MushroomMixup only works on Fungle
-            {
-
-                shipStatus.RpcUpdateSystem(SystemTypes.MushroomMixupSabotage, 1); // Sabotage
-
-            }
-            else
-            {
-                // Notify the player if they try to activate the cheat in a map without mushrooms
-
-                HudManager.Instance.Notifier.AddDisconnectMessage("Mushrooms not present on this map");
-            }
-
-            // Repair (bugged)
-            // var mushSys = shipStatus.Systems[SystemTypes.MushroomMixupSabotage].Cast<MushroomMixupSabotageSystem>();
-            // mushSys.Deteriorate(mushSys.currentSecondsUntilHeal);
-
-            CheatToggles.mushSab = false;
-        }
-
-        public static void HandleSpores(FungleShipStatus shipStatus, byte mapId)
-        {
-            if (!CheatToggles.mushSpore) return;
-
-            if (mapId == 5)
-            {
-                foreach (var mushroom in shipStatus.sporeMushrooms.Values)
-                {
-                    PlayerControl.LocalPlayer.CmdCheckSporeTrigger(mushroom);
-                }
-            }
-            else
-            {
-                HudManager.Instance.Notifier.AddDisconnectMessage("Mushrooms not present on this map");
-            }
-
-            CheatToggles.mushSpore = false;
-        }
-
         public static void HandleDoors(ShipStatus shipStatus)
         {
             if (CheatToggles.closeAllDoors)
@@ -293,15 +250,6 @@ namespace NekoMenu
             HandleComms(shipStatus, currentMapID);
             HandleElectrical(shipStatus, currentMapID);
             HandleDoors(shipStatus);
-        }
-
-        public static void ProcessFungle(FungleShipStatus shipStatus)
-        {
-            var currentMapID = Utils.GetCurrentMapID();
-
-            // Handle Fungle sabotage systems
-            HandleMushMix(shipStatus, currentMapID);
-            HandleSpores(shipStatus, currentMapID);
         }
     }
 }
