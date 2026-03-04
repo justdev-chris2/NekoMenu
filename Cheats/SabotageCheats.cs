@@ -18,7 +18,7 @@ namespace NekoMenu
         {
             switch (mapId)
             {
-                case 2: // Polus
+                case 2:
                 {
                     var labSys = shipStatus.Systems[SystemTypes.Laboratory].TryCast<ReactorSystemType>();
                     if (labSys == null) break;
@@ -31,18 +31,39 @@ namespace NekoMenu
                     CheatToggles.reactorSab = _reactorSab = labSys.IsActive;
                     break;
                 }
-                default: // Other maps (including Airship - simplified)
+                case 4:
+                {
+                    var heliSys = shipStatus.Systems[SystemTypes.HeliSabotage].TryCast<HeliSabotageSystem>();
+                    if (heliSys == null) break;
+
+                    if (CheatToggles.reactorSab != _reactorSab)
+                    {
+                        if (CheatToggles.reactorSab)
+                        {
+                            // Fixed with byte casts
+                            shipStatus.RpcUpdateSystem(SystemTypes.HeliSabotage, (byte)(16 | 0));
+                            shipStatus.RpcUpdateSystem(SystemTypes.HeliSabotage, (byte)(16 | 1));
+                        }
+                        else
+                        {
+                            shipStatus.RpcUpdateSystem(SystemTypes.HeliSabotage, (byte)128);
+                        }
+                        _reactorSab = CheatToggles.reactorSab;
+                    }
+                    CheatToggles.reactorSab = _reactorSab = heliSys.IsActive;
+                    break;
+                }
+                default:
                 {
                     var reactorSys = shipStatus.Systems[SystemTypes.Reactor].TryCast<ReactorSystemType>();
-                    
+                    if (reactorSys == null) break;
+
                     if (CheatToggles.reactorSab != _reactorSab)
                     {
                         shipStatus.RpcUpdateSystem(SystemTypes.Reactor, CheatToggles.reactorSab ? (byte)16 : (byte)128);
                         _reactorSab = CheatToggles.reactorSab;
                     }
-                    
-                    if (reactorSys != null)
-                        CheatToggles.reactorSab = _reactorSab = reactorSys.IsActive;
+                    CheatToggles.reactorSab = _reactorSab = reactorSys.IsActive;
                     break;
                 }
             }
@@ -82,8 +103,9 @@ namespace NekoMenu
                 {
                     if (CheatToggles.commsSab)
                     {
-                        shipStatus.RpcUpdateSystem(SystemTypes.Comms, (byte)16);
-                        shipStatus.RpcUpdateSystem(SystemTypes.Comms, (byte)17);
+                        // Fixed with byte casts
+                        shipStatus.RpcUpdateSystem(SystemTypes.Comms, (byte)(16 | 0));
+                        shipStatus.RpcUpdateSystem(SystemTypes.Comms, (byte)(16 | 1));
                     }
                     else
                     {
@@ -167,6 +189,41 @@ namespace NekoMenu
             _unfixableLights = CheatToggles.unfixableLights;
         }
 
+        public static void HandleMushMix(ShipStatus shipStatus, byte mapId)
+        {
+            if (!CheatToggles.mushSab) return;
+
+            if (mapId == 5)
+            {
+                shipStatus.RpcUpdateSystem(SystemTypes.MushroomMixupSabotage, (byte)1);
+            }
+            else
+            {
+                HudManager.Instance.Notifier.AddDisconnectMessage("Mushrooms not present on this map");
+            }
+
+            CheatToggles.mushSab = false;
+        }
+
+        public static void HandleSpores(FungleShipStatus shipStatus, byte mapId)
+        {
+            if (!CheatToggles.mushSpore) return;
+
+            if (mapId == 5)
+            {
+                foreach (var mushroom in shipStatus.sporeMushrooms.Values)
+                {
+                    PlayerControl.LocalPlayer.CmdCheckSporeTrigger(mushroom);
+                }
+            }
+            else
+            {
+                HudManager.Instance.Notifier.AddDisconnectMessage("Mushrooms not present on this map");
+            }
+
+            CheatToggles.mushSpore = false;
+        }
+
         public static void HandleDoors(ShipStatus shipStatus)
         {
             if (CheatToggles.closeAllDoors)
@@ -179,9 +236,14 @@ namespace NekoMenu
                 DoorsHandler.OpenAllDoors();
                 CheatToggles.openAllDoors = false;
             }
+
             if (CheatToggles.spamCloseAllDoors)
             {
                 DoorsHandler.CloseAllDoors();
+            }
+            if (CheatToggles.spamOpenAllDoors)
+            {
+                DoorsHandler.OpenAllDoors();
             }
         }
 
@@ -194,6 +256,14 @@ namespace NekoMenu
             HandleComms(shipStatus, currentMapID);
             HandleElectrical(shipStatus, currentMapID);
             HandleDoors(shipStatus);
+        }
+
+        public static void ProcessFungle(FungleShipStatus shipStatus)
+        {
+            var currentMapID = Utils.GetCurrentMapID();
+
+            HandleMushMix(shipStatus, currentMapID);
+            HandleSpores(shipStatus, currentMapID);
         }
     }
 }
