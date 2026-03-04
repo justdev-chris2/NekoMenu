@@ -145,7 +145,7 @@ namespace NekoMenu
 
                             if ((elecSys.ActualSwitches & switchMask) != (elecSys.ExpectedSwitches & switchMask))
                             {
-                                shipStatus.RpcUpdateSystem(SystemTypes.Electrical, (byte)i);
+                                shipStatus.RpcUpdateSystem(SystemTypes.Electrical, (byte)(b | 128));
                             }
                         }
                     }
@@ -192,27 +192,27 @@ namespace NekoMenu
         }
 
         public static void HandleDoors(ShipStatus shipStatus)
-        {
-            if (CheatToggles.closeAllDoors)
-            {
-                DoorsHandler.CloseAllDoors();
-                CheatToggles.closeAllDoors = false;
-            }
-            if (CheatToggles.openAllDoors)
-            {
-                DoorsHandler.OpenAllDoors();
-                CheatToggles.openAllDoors = false;
-            }
+{
+    if (CheatToggles.closeAllDoors)
+    {
+        DoorsHandler.CloseAllDoors();
+        CheatToggles.closeAllDoors = false;
+    }
+    if (CheatToggles.openAllDoors)
+    {
+        DoorsHandler.OpenAllDoors();
+        CheatToggles.openAllDoors = false;
+    }
 
-            if (CheatToggles.spamCloseAllDoors)
-            {
-                DoorsHandler.CloseAllDoors();
-            }
-            if (CheatToggles.spamOpenAllDoors)
-            {
-                DoorsHandler.OpenAllDoors();
-            }
-        }
+    if (CheatToggles.spamCloseAllDoors)
+    {
+        DoorsHandler.CloseAllDoors();
+    }
+    if (CheatToggles.spamOpenAllDoors)
+    {
+        DoorsHandler.OpenAllDoors();
+    }
+}
 
         public static void Process(ShipStatus shipStatus)
         {
