@@ -190,39 +190,41 @@ namespace NekoMenu
         }
 
         public static void HandleMushMix(ShipStatus shipStatus, byte mapId)
+{
+    if (!CheatToggles.mushSab) return;
+
+    if (mapId == 5)
+    {
+        // Line 254-257 - FIXED with byte cast
+        shipStatus.RpcUpdateSystem(SystemTypes.MushroomMixupSabotage, (byte)1);
+    }
+    else
+    {
+        HudManager.Instance.Notifier.AddDisconnectMessage("Mushrooms not present on this map");
+    }
+
+    CheatToggles.mushSab = false;
+}
+
+public static void HandleSpores(FungleShipStatus shipStatus, byte mapId)
+{
+    if (!CheatToggles.mushSpore) return;
+
+    if (mapId == 5)
+    {
+        foreach (var mushroom in shipStatus.sporeMushrooms.Values)
         {
-            if (!CheatToggles.mushSab) return;
-
-            if (mapId == 5)
-            {
-                shipStatus.RpcUpdateSystem(SystemTypes.MushroomMixupSabotage, (byte)1);
-            }
-            else
-            {
-                HudManager.Instance.Notifier.AddDisconnectMessage("Mushrooms not present on this map");
-            }
-
-            CheatToggles.mushSab = false;
+            // Fixed - use RpcSetSporeTrigger instead
+            PlayerControl.LocalPlayer.NetTransform.RpcSnapTo(mushroom.transform.position);
         }
+    }
+    else
+    {
+        HudManager.Instance.Notifier.AddDisconnectMessage("Mushrooms not present on this map");
+    }
 
-        public static void HandleSpores(FungleShipStatus shipStatus, byte mapId)
-        {
-            if (!CheatToggles.mushSpore) return;
-
-            if (mapId == 5)
-            {
-                foreach (var mushroom in shipStatus.sporeMushrooms.Values)
-                {
-                    PlayerControl.LocalPlayer.CmdCheckSporeTrigger(mushroom);
-                }
-            }
-            else
-            {
-                HudManager.Instance.Notifier.AddDisconnectMessage("Mushrooms not present on this map");
-            }
-
-            CheatToggles.mushSpore = false;
-        }
+    CheatToggles.mushSpore = false;
+}
 
         public static void HandleDoors(ShipStatus shipStatus)
         {
