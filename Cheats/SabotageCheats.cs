@@ -70,7 +70,7 @@ namespace NekoMenu
 
         public static void HandleOxygen(ShipStatus shipStatus, byte mapId)
         {
-            if (mapId == 2 || mapId == 4 || mapId == 5) // Maps without oxygen
+            if (mapId == 2 || mapId == 4 || mapId == 5)
             {
                 if (CheatToggles.oxygenSab)
                 {
@@ -93,7 +93,7 @@ namespace NekoMenu
 
         public static void HandleComms(ShipStatus shipStatus, byte mapId)
         {
-            if (mapId == 1 || mapId == 5) // Skeld & Fungle
+            if (mapId == 1 || mapId == 5)
             {
                 var hqCommsSys = shipStatus.Systems[SystemTypes.Comms].TryCast<HqHudSystemType>();
                 if (hqCommsSys == null) return;
@@ -129,7 +129,7 @@ namespace NekoMenu
 
         public static void HandleElectrical(ShipStatus shipStatus, byte mapId)
         {
-            if (mapId == 5) // Fungle has no electrical
+            if (mapId == 5)
             {
                 if (CheatToggles.elecSab || CheatToggles.unfixableLights)
                 {
@@ -146,7 +146,7 @@ namespace NekoMenu
 
             if (CheatToggles.elecSab != _elecSab)
             {
-                if (CheatToggles.elecSab) // Repair
+                if (CheatToggles.elecSab)
                 {
                     for (var i = 0; i < 5; i++)
                     {
@@ -157,7 +157,7 @@ namespace NekoMenu
                         }
                     }
                 }
-                else // Sabotage
+                else
                 {
                     CheatToggles.unfixableLights = false;
                     byte b = 4;
