@@ -31,39 +31,18 @@ namespace NekoMenu
                     CheatToggles.reactorSab = _reactorSab = labSys.IsActive;
                     break;
                 }
-                case 4: // Airship
-                {
-                    var heliSys = shipStatus.Systems[SystemTypes.HeliSabotage].TryCast<HeliSabotageSystem>();
-                    if (heliSys == null) break;
-
-                    if (CheatToggles.reactorSab != _reactorSab)
-                    {
-                        if (CheatToggles.reactorSab)
-                        {
-                            // Lines 212-215 - ALL EXPLICITLY CAST TO BYTE
-                            shipStatus.RpcUpdateSystem(SystemTypes.HeliSabotage, (byte)16);
-                            shipStatus.RpcUpdateSystem(SystemTypes.HeliSabotage, (byte)17);
-                        }
-                        else
-                        {
-                            shipStatus.RpcUpdateSystem(SystemTypes.HeliSabotage, (byte)128);
-                        }
-                        _reactorSab = CheatToggles.reactorSab;
-                    }
-                    CheatToggles.reactorSab = _reactorSab = heliSys.IsActive;
-                    break;
-                }
-                default: // Other maps
+                default: // Other maps (including Airship - simplified)
                 {
                     var reactorSys = shipStatus.Systems[SystemTypes.Reactor].TryCast<ReactorSystemType>();
-                    if (reactorSys == null) break;
-
+                    
                     if (CheatToggles.reactorSab != _reactorSab)
                     {
                         shipStatus.RpcUpdateSystem(SystemTypes.Reactor, CheatToggles.reactorSab ? (byte)16 : (byte)128);
                         _reactorSab = CheatToggles.reactorSab;
                     }
-                    CheatToggles.reactorSab = _reactorSab = reactorSys.IsActive;
+                    
+                    if (reactorSys != null)
+                        CheatToggles.reactorSab = _reactorSab = reactorSys.IsActive;
                     break;
                 }
             }
