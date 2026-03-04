@@ -32,26 +32,27 @@ namespace NekoMenu
                     break;
                 }
                 case 4:
-                {
-                    var heliSys = shipStatus.Systems[SystemTypes.HeliSabotage].TryCast<HeliSabotageSystem>();
-                    if (heliSys == null) break;
+{
+    var heliSys = shipStatus.Systems[SystemTypes.HeliSabotage].TryCast<HeliSabotageSystem>();
+    if (heliSys == null) break;
 
-                    if (CheatToggles.reactorSab != _reactorSab)
-                    {
-                        if (CheatToggles.reactorSab)
-                        {
-                            shipStatus.RpcUpdateSystem(SystemTypes.HeliSabotage, (byte)(16 | 0));
-                            shipStatus.RpcUpdateSystem(SystemTypes.HeliSabotage, (byte)(16 | 1));
-                        }
-                        else
-                        {
-                            shipStatus.RpcUpdateSystem(SystemTypes.HeliSabotage, (byte)128);
-                        }
-                        _reactorSab = CheatToggles.reactorSab;
-                    }
-                    CheatToggles.reactorSab = _reactorSab = heliSys.IsActive;
-                    break;
-                }
+    if (CheatToggles.reactorSab != _reactorSab)
+    {
+        if (CheatToggles.reactorSab)
+        {
+            // Lines 213-216 - ALL cast to byte
+            shipStatus.RpcUpdateSystem(SystemTypes.HeliSabotage, (byte)16);
+            shipStatus.RpcUpdateSystem(SystemTypes.HeliSabotage, (byte)17);
+        }
+        else
+        {
+            shipStatus.RpcUpdateSystem(SystemTypes.HeliSabotage, (byte)128);
+        }
+        _reactorSab = CheatToggles.reactorSab;
+    }
+    CheatToggles.reactorSab = _reactorSab = heliSys.IsActive;
+    break;
+}
                 default:
                 {
                     var reactorSys = shipStatus.Systems[SystemTypes.Reactor].TryCast<ReactorSystemType>();
