@@ -103,8 +103,8 @@ namespace NekoMenu
                 {
                     if (CheatToggles.commsSab)
                     {
-                        shipStatus.RpcUpdateSystem(SystemTypes.Comms, (byte)(16 | 0));
-                        shipStatus.RpcUpdateSystem(SystemTypes.Comms, (byte)(16 | 1));
+                        shipStatus.RpcUpdateSystem(SystemTypes.Comms, (byte)16);
+                        shipStatus.RpcUpdateSystem(SystemTypes.Comms, (byte)17);
                     }
                     else
                     {
