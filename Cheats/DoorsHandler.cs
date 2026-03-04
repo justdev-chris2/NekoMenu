@@ -11,7 +11,6 @@ namespace NekoMenu
         public static List<SystemTypes> GetRoomsWithDoors()
         {
             if (ShipStatus.Instance == null || ShipStatus.Instance.AllDoors.Count <= 0) return new List<SystemTypes>();
-
             return ShipStatus.Instance.AllDoors.Select(d => d.Room).Distinct().ToList();
         }
 
@@ -19,7 +18,6 @@ namespace NekoMenu
         public static List<OpenableDoor> GetDoorsInRoom(SystemTypes room)
         {
             if (ShipStatus.Instance == null || ShipStatus.Instance.AllDoors.Count <= 0) return new List<OpenableDoor>();
-
             return ShipStatus.Instance.AllDoors.Where(d => d.Room == room).ToList();
         }
 
@@ -51,6 +49,7 @@ namespace NekoMenu
         // Opens all doors on the map
         public static void OpenAllDoors()
         {
+            if (ShipStatus.Instance == null) return;
             foreach (var door in ShipStatus.Instance.AllDoors)
             {
                 OpenDoor(door);
@@ -60,6 +59,7 @@ namespace NekoMenu
         // Closes all doors on the map
         public static void CloseAllDoors()
         {
+            if (ShipStatus.Instance == null) return;
             foreach (var door in ShipStatus.Instance.AllDoors)
             {
                 try { ShipStatus.Instance.RpcCloseDoorsOfType(door.Room); } catch { }
