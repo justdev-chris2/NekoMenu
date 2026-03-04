@@ -138,17 +138,16 @@ namespace NekoMenu
                 if (CheatToggles.elecSab != _elecSab)
                 {
                     if (CheatToggles.elecSab)
-                    {
-                        for (var i = 0; i < 5; i++)
-                        {
-                            var switchMask = 1 << (i & 0x1F);
-
-                            if ((elecSys.ActualSwitches & switchMask) != (elecSys.ExpectedSwitches & switchMask))
-                            {
-                                shipStatus.RpcUpdateSystem(SystemTypes.Electrical, (byte)(b | 128));
-                            }
-                        }
-                    }
+{
+    for (var i = 0; i < 5; i++)
+    {
+        var switchMask = 1 << (i & 0x1F);
+        if ((elecSys.ActualSwitches & switchMask) != (elecSys.ExpectedSwitches & switchMask))
+        {
+            shipStatus.RpcUpdateSystem(SystemTypes.Electrical, (byte)(b | 128));  // ERROR - 'b' doesn't exist here!
+        }
+    }
+}
                     else
                     {
                         CheatToggles.unfixableLights = false;
