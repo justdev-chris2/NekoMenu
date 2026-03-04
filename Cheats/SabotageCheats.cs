@@ -39,8 +39,8 @@ namespace NekoMenu
                     {
                         if (CheatToggles.reactorSab)
                         {
-                            shipStatus.RpcUpdateSystem(SystemTypes.HeliSabotage, (byte)(16 | 0));
-                            shipStatus.RpcUpdateSystem(SystemTypes.HeliSabotage, (byte)(16 | 1));
+                            shipStatus.RpcUpdateSystem(SystemTypes.HeliSabotage, (byte)16);
+                            shipStatus.RpcUpdateSystem(SystemTypes.HeliSabotage, (byte)17);
                         }
                         else
                         {
@@ -100,8 +100,8 @@ namespace NekoMenu
                 {
                     if (CheatToggles.commsSab)
                     {
-                        shipStatus.RpcUpdateSystem(SystemTypes.Comms, (byte)(16 | 0));
-                        shipStatus.RpcUpdateSystem(SystemTypes.Comms, (byte)(16 | 1));
+                        shipStatus.RpcUpdateSystem(SystemTypes.Comms, (byte)16);
+                        shipStatus.RpcUpdateSystem(SystemTypes.Comms, (byte)17);
                     }
                     else
                     {
@@ -156,7 +156,6 @@ namespace NekoMenu
                         byte b = 4;
                         for (var i = 0; i < 5; i++)
                         {
-                            // REPLACED BoolRange.Next(0.5f) with Unity Random
                             if (UnityEngine.Random.Range(0f, 1f) > 0.5f)
                             {
                                 b |= (byte)(1 << i);
