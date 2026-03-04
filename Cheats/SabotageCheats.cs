@@ -18,23 +18,23 @@ namespace NekoMenu
         {
             switch (mapId)
             {
-                case 2:
+                case 2: // Polus
                 {
                     var labSys = shipStatus.Systems[SystemTypes.Laboratory].TryCast<ReactorSystemType>();
+                    if (labSys == null) break;
 
                     if (CheatToggles.reactorSab != _reactorSab)
                     {
                         shipStatus.RpcUpdateSystem(SystemTypes.Laboratory, CheatToggles.reactorSab ? (byte)16 : (byte)128);
                         _reactorSab = CheatToggles.reactorSab;
                     }
-
-                    if (labSys != null)
-                        CheatToggles.reactorSab = _reactorSab = labSys.IsActive;
+                    CheatToggles.reactorSab = _reactorSab = labSys.IsActive;
                     break;
                 }
-                case 4:
+                case 4: // Airship
                 {
                     var heliSys = shipStatus.Systems[SystemTypes.HeliSabotage].TryCast<HeliSabotageSystem>();
+                    if (heliSys == null) break;
 
                     if (CheatToggles.reactorSab != _reactorSab)
                     {
@@ -47,26 +47,22 @@ namespace NekoMenu
                         {
                             shipStatus.RpcUpdateSystem(SystemTypes.HeliSabotage, (byte)128);
                         }
-
                         _reactorSab = CheatToggles.reactorSab;
                     }
-
-                    if (heliSys != null)
-                        CheatToggles.reactorSab = _reactorSab = heliSys.IsActive;
+                    CheatToggles.reactorSab = _reactorSab = heliSys.IsActive;
                     break;
                 }
-                default:
+                default: // Other maps
                 {
                     var reactorSys = shipStatus.Systems[SystemTypes.Reactor].TryCast<ReactorSystemType>();
+                    if (reactorSys == null) break;
 
                     if (CheatToggles.reactorSab != _reactorSab)
                     {
                         shipStatus.RpcUpdateSystem(SystemTypes.Reactor, CheatToggles.reactorSab ? (byte)16 : (byte)128);
                         _reactorSab = CheatToggles.reactorSab;
                     }
-
-                    if (reactorSys != null)
-                        CheatToggles.reactorSab = _reactorSab = reactorSys.IsActive;
+                    CheatToggles.reactorSab = _reactorSab = reactorSys.IsActive;
                     break;
                 }
             }
@@ -74,31 +70,33 @@ namespace NekoMenu
 
         public static void HandleOxygen(ShipStatus shipStatus, byte mapId)
         {
-            if (mapId != 4 && mapId != 2 && mapId != 5)
+            if (mapId == 2 || mapId == 4 || mapId == 5) // Maps without oxygen
             {
-                var oxygenSys = shipStatus.Systems[SystemTypes.LifeSupp].TryCast<LifeSuppSystemType>();
-
-                if (CheatToggles.oxygenSab != _oxygenSab)
+                if (CheatToggles.oxygenSab)
                 {
-                    shipStatus.RpcUpdateSystem(SystemTypes.LifeSupp, CheatToggles.oxygenSab ? (byte)16 : (byte)128);
-                    _oxygenSab = CheatToggles.oxygenSab;
+                    HudManager.Instance.Notifier.AddDisconnectMessage("Oxygen system not present on this map");
+                    CheatToggles.oxygenSab = false;
                 }
-
-                if (oxygenSys != null)
-                    CheatToggles.oxygenSab = _oxygenSab = oxygenSys.IsActive;
                 return;
             }
 
-            if (!CheatToggles.oxygenSab) return;
-            HudManager.Instance.Notifier.AddDisconnectMessage("Oxygen system not present on this map");
-            CheatToggles.oxygenSab = false;
+            var oxygenSys = shipStatus.Systems[SystemTypes.LifeSupp].TryCast<LifeSuppSystemType>();
+            if (oxygenSys == null) return;
+
+            if (CheatToggles.oxygenSab != _oxygenSab)
+            {
+                shipStatus.RpcUpdateSystem(SystemTypes.LifeSupp, CheatToggles.oxygenSab ? (byte)16 : (byte)128);
+                _oxygenSab = CheatToggles.oxygenSab;
+            }
+            CheatToggles.oxygenSab = _oxygenSab = oxygenSys.IsActive;
         }
 
         public static void HandleComms(ShipStatus shipStatus, byte mapId)
         {
-            if (mapId is 1 or 5)
+            if (mapId == 1 || mapId == 5) // Skeld & Fungle
             {
                 var hqCommsSys = shipStatus.Systems[SystemTypes.Comms].TryCast<HqHudSystemType>();
+                if (hqCommsSys == null) return;
 
                 if (CheatToggles.commsSab != _commsSab)
                 {
@@ -111,78 +109,70 @@ namespace NekoMenu
                     {
                         shipStatus.RpcUpdateSystem(SystemTypes.Comms, (byte)128);
                     }
-
                     _commsSab = CheatToggles.commsSab;
                 }
-
-                if (hqCommsSys != null)
-                    CheatToggles.commsSab = _commsSab = hqCommsSys.IsActive;
+                CheatToggles.commsSab = _commsSab = hqCommsSys.IsActive;
             }
             else
             {
                 var commsSys = shipStatus.Systems[SystemTypes.Comms].TryCast<HudOverrideSystemType>();
+                if (commsSys == null) return;
 
                 if (CheatToggles.commsSab != _commsSab)
                 {
                     shipStatus.RpcUpdateSystem(SystemTypes.Comms, CheatToggles.commsSab ? (byte)16 : (byte)128);
                     _commsSab = CheatToggles.commsSab;
                 }
-
-                if (commsSys != null)
-                    CheatToggles.commsSab = _commsSab = commsSys.IsActive;
+                CheatToggles.commsSab = _commsSab = commsSys.IsActive;
             }
         }
 
         public static void HandleElectrical(ShipStatus shipStatus, byte mapId)
         {
-            if (mapId != 5)
+            if (mapId == 5) // Fungle has no electrical
             {
-                var elecSys = shipStatus.Systems[SystemTypes.Electrical].TryCast<SwitchSystem>();
-
-                HandleUnfixLights(shipStatus);
-
-                if (CheatToggles.elecSab != _elecSab)
+                if (CheatToggles.elecSab || CheatToggles.unfixableLights)
                 {
-                    if (CheatToggles.elecSab)
-                    {
-                        for (var i = 0; i < 5; i++)
-                        {
-                            var switchMask = 1 << (i & 0x1F);
-
-                            if (elecSys != null && (elecSys.ActualSwitches & switchMask) != (elecSys.ExpectedSwitches & switchMask))
-                            {
-                                shipStatus.RpcUpdateSystem(SystemTypes.Electrical, (byte)i);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        CheatToggles.unfixableLights = false;
-
-                        byte b = 4;
-                        for (var i = 0; i < 5; i++)
-                        {
-                            if (UnityEngine.Random.Range(0f, 1f) > 0.5f)
-                            {
-                                b |= (byte)(1 << i);
-                            }
-                        }
-
-                        shipStatus.RpcUpdateSystem(SystemTypes.Electrical, (byte)(b | 128));
-                    }
-
-                    _elecSab = CheatToggles.elecSab;
+                    HudManager.Instance.Notifier.AddDisconnectMessage("Electrical system not present on this map");
+                    CheatToggles.elecSab = CheatToggles.unfixableLights = false;
                 }
-
-                if (elecSys != null)
-                    CheatToggles.elecSab = _elecSab = elecSys.IsActive && !_unfixableLights;
                 return;
             }
 
-            if (!CheatToggles.elecSab && !CheatToggles.unfixableLights) return;
+            var elecSys = shipStatus.Systems[SystemTypes.Electrical].TryCast<SwitchSystem>();
+            if (elecSys == null) return;
 
-            HudManager.Instance.Notifier.AddDisconnectMessage("Electrical system not present on this map");
-            CheatToggles.elecSab = CheatToggles.unfixableLights = false;
+            HandleUnfixLights(shipStatus);
+
+            if (CheatToggles.elecSab != _elecSab)
+            {
+                if (CheatToggles.elecSab) // Repair
+                {
+                    for (var i = 0; i < 5; i++)
+                    {
+                        var switchMask = 1 << (i & 0x1F);
+                        if ((elecSys.ActualSwitches & switchMask) != (elecSys.ExpectedSwitches & switchMask))
+                        {
+                            shipStatus.RpcUpdateSystem(SystemTypes.Electrical, (byte)i);
+                        }
+                    }
+                }
+                else // Sabotage
+                {
+                    CheatToggles.unfixableLights = false;
+                    byte b = 4;
+                    for (var i = 0; i < 5; i++)
+                    {
+                        if (UnityEngine.Random.Range(0f, 1f) > 0.5f)
+                        {
+                            b |= (byte)(1 << i);
+                        }
+                    }
+                    shipStatus.RpcUpdateSystem(SystemTypes.Electrical, (byte)(b | 128));
+                }
+                _elecSab = CheatToggles.elecSab;
+            }
+            CheatToggles.elecSab = _elecSab = elecSys.IsActive && !_unfixableLights;
         }
 
         public static void HandleUnfixLights(ShipStatus shipStatus)
@@ -193,64 +183,27 @@ namespace NekoMenu
             {
                 CheatToggles.elecSab = false;
             }
-
             shipStatus.RpcUpdateSystem(SystemTypes.Electrical, (byte)69);
             _unfixableLights = CheatToggles.unfixableLights;
         }
 
-        public static void HandleMushMix(ShipStatus shipStatus, byte mapId)
-        {
-            if (!CheatToggles.mushSab) return;
-
-            if (mapId == 5)
-            {
-                shipStatus.RpcUpdateSystem(SystemTypes.MushroomMixupSabotage, (byte)1);
-            }
-            else
-            {
-                HudManager.Instance.Notifier.AddDisconnectMessage("Mushrooms not present on this map");
-            }
-
-            CheatToggles.mushSab = false;
-        }
-
-        public static void HandleSpores(FungleShipStatus shipStatus, byte mapId)
-        {
-            if (!CheatToggles.mushSpore) return;
-
-            if (mapId == 5)
-            {
-                foreach (var mushroom in shipStatus.sporeMushrooms.Values)
-                {
-                    PlayerControl.LocalPlayer.CmdCheckSporeTrigger(mushroom);
-                }
-            }
-            else
-            {
-                HudManager.Instance.Notifier.AddDisconnectMessage("Mushrooms not present on this map");
-            }
-
-            CheatToggles.mushSpore = false;
-        }
-
         public static void HandleDoors(ShipStatus shipStatus)
-{
-    if (CheatToggles.closeAllDoors)
-    {
-        DoorsHandler.CloseAllDoors();
-        CheatToggles.closeAllDoors = false;
-    }
-    if (CheatToggles.openAllDoors)
-    {
-        DoorsHandler.OpenAllDoors();
-        CheatToggles.openAllDoors = false;
-    }
-
-    if (CheatToggles.spamCloseAllDoors)
-    {
-        DoorsHandler.CloseAllDoors();
-    }
-}
+        {
+            if (CheatToggles.closeAllDoors)
+            {
+                DoorsHandler.CloseAllDoors();
+                CheatToggles.closeAllDoors = false;
+            }
+            if (CheatToggles.openAllDoors)
+            {
+                DoorsHandler.OpenAllDoors();
+                CheatToggles.openAllDoors = false;
+            }
+            if (CheatToggles.spamCloseAllDoors)
+            {
+                DoorsHandler.CloseAllDoors();
+            }
+        }
 
         public static void Process(ShipStatus shipStatus)
         {
@@ -261,14 +214,6 @@ namespace NekoMenu
             HandleComms(shipStatus, currentMapID);
             HandleElectrical(shipStatus, currentMapID);
             HandleDoors(shipStatus);
-        }
-
-        public static void ProcessFungle(FungleShipStatus shipStatus)
-        {
-            var currentMapID = Utils.GetCurrentMapID();
-
-            HandleMushMix(shipStatus, currentMapID);
-            HandleSpores(shipStatus, currentMapID);
         }
     }
 }
