@@ -44,10 +44,6 @@ namespace NekoMenu
                     RoleCheats.HandleTrackerCheats(tracker);
             }
             
-            if (ShipStatus.Instance != null)
-            {
-                SabotageCheats.Process(ShipStatus.Instance);
-            }
             
             MeetingCheats.CloseMeetingCheat();
             MeetingCheats.SkipMeetingCheat();
