@@ -137,22 +137,24 @@ namespace NekoMenu
 
                 if (CheatToggles.elecSab != _elecSab)
                 {
+                    byte b = 4;
+                    
                     if (CheatToggles.elecSab)
-{
-    for (var i = 0; i < 5; i++)
-    {
-        var switchMask = 1 << (i & 0x1F);
-        if ((elecSys.ActualSwitches & switchMask) != (elecSys.ExpectedSwitches & switchMask))
-        {
-            shipStatus.RpcUpdateSystem(SystemTypes.Electrical, (byte)(b | 128));  // ERROR - 'b' doesn't exist here!
-        }
-    }
-}
+                    {
+                        for (var i = 0; i < 5; i++)
+                        {
+                            var switchMask = 1 << (i & 0x1F);
+                            if ((elecSys.ActualSwitches & switchMask) != (elecSys.ExpectedSwitches & switchMask))
+                            {
+                                b |= (byte)(1 << i);
+                            }
+                        }
+                        shipStatus.RpcUpdateSystem(SystemTypes.Electrical, (byte)(b | 128));
+                    }
                     else
                     {
                         CheatToggles.unfixableLights = false;
 
-                        byte b = 4;
                         for (var i = 0; i < 5; i++)
                         {
                             if (UnityEngine.Random.Range(0f, 1f) > 0.5f)
@@ -191,27 +193,27 @@ namespace NekoMenu
         }
 
         public static void HandleDoors(ShipStatus shipStatus)
-{
-    if (CheatToggles.closeAllDoors)
-    {
-        DoorsHandler.CloseAllDoors();
-        CheatToggles.closeAllDoors = false;
-    }
-    if (CheatToggles.openAllDoors)
-    {
-        DoorsHandler.OpenAllDoors();
-        CheatToggles.openAllDoors = false;
-    }
+        {
+            if (CheatToggles.closeAllDoors)
+            {
+                DoorsHandler.CloseAllDoors();
+                CheatToggles.closeAllDoors = false;
+            }
+            if (CheatToggles.openAllDoors)
+            {
+                DoorsHandler.OpenAllDoors();
+                CheatToggles.openAllDoors = false;
+            }
 
-    if (CheatToggles.spamCloseAllDoors)
-    {
-        DoorsHandler.CloseAllDoors();
-    }
-    if (CheatToggles.spamOpenAllDoors)
-    {
-        DoorsHandler.OpenAllDoors();
-    }
-}
+            if (CheatToggles.spamCloseAllDoors)
+            {
+                DoorsHandler.CloseAllDoors();
+            }
+            if (CheatToggles.spamOpenAllDoors)
+            {
+                DoorsHandler.OpenAllDoors();
+            }
+        }
 
         public static void Process(ShipStatus shipStatus)
         {
