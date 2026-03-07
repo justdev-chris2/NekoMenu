@@ -146,7 +146,7 @@ namespace NekoMenu
                             var switchMask = 1 << (i & 0x1F);
                             if ((elecSys.ActualSwitches & switchMask) != (elecSys.ExpectedSwitches & switchMask))
                             {
-                                b |= (byte)(1 << i);
+                                b = (byte)(b | (1 << i));
                             }
                         }
                         shipStatus.RpcUpdateSystem(SystemTypes.Electrical, (byte)(b | 128));
@@ -159,7 +159,7 @@ namespace NekoMenu
                         {
                             if (UnityEngine.Random.Range(0f, 1f) > 0.5f)
                             {
-                                b |= (byte)(1 << i);
+                                b = (byte)(b | (1 << i));
                             }
                         }
 
