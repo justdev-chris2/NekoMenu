@@ -149,7 +149,7 @@ namespace NekoMenu
                                 b = (byte)(b | (1 << i));
                             }
                         }
-                        shipStatus.RpcUpdateSystem(SystemTypes.Electrical, b | 128);
+                        shipStatus.RpcUpdateSystem(SystemTypes.Electrical, (byte)(b | 128));
                     }
                     else
                     {
@@ -163,7 +163,7 @@ namespace NekoMenu
                             }
                         }
 
-                        shipStatus.RpcUpdateSystem(SystemTypes.Electrical, b | 128);
+                        shipStatus.RpcUpdateSystem(SystemTypes.Electrical, (byte)(b | 128));
                     }
 
                     _elecSab = CheatToggles.elecSab;
